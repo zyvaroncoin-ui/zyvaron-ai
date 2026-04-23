@@ -19,7 +19,6 @@ loginForm.addEventListener("submit", function (e) {
 
 function sendMessage() {
   const message = userInput.value.trim();
-
   if (message === "") return;
 
   const userMessage = document.createElement("div");
@@ -31,17 +30,16 @@ function sendMessage() {
 
   const botMessage = document.createElement("div");
   botMessage.className = "bot-message";
+  botMessage.textContent = "Typing...";
+  chatBox.appendChild(botMessage);
 
   setTimeout(() => {
     botMessage.textContent =
-      "This is Zyvaron AI demo response. Real AI API will be connected later.";
-    chatBox.appendChild(botMessage);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }, 700);
+      "Zyvaron AI is thinking... (Real AI API will be connected soon)";
+  }, 1200);
 
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 function showMessage(text) {
   const botMessage = document.createElement("div");
   botMessage.className = "bot-message";
