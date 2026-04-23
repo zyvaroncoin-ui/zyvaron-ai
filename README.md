@@ -1,2 +1,0 @@
-# zyvaron-ai
-AI Tools
