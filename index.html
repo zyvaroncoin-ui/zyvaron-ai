@@ -4,89 +4,184 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zyvaron.AI</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/4712/4712027.png">
+  <meta
+    name="description"
+    content="Zyvaron.AI - Ask anything. Create faster. Think smarter."
+  />
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
+  <div class="bg-blur bg-blur-1"></div>
+  <div class="bg-blur bg-blur-2"></div>
+
   <!-- Welcome Screen -->
-  <div id="welcome-screen" class="welcome-screen">
-    <div class="welcome-content">
-      <h1 class="welcome-title">Welcome to Zyvaron AI</h1>
-      <p class="welcome-subtitle">
-  Ask anything. Create faster. Think smarter with Zyvaron AI.
-</p>
-      <button id="start-btn" class="primary-btn">Start</button>
+  <section id="welcome-screen" class="screen welcome-screen">
+    <div class="glass-card welcome-card fade-up">
+      <div class="brand-top">
+        <div class="logo-mark">Z</div>
+        <div>
+          <h1>Welcome to Zyvaron AI</h1>
+          <p>Ask anything. Create faster. Think smarter with Zyvaron AI.</p>
+        </div>
+      </div>
+
+      <div class="hero-pills">
+        <span>Human-like UI</span>
+        <span>Fast Chat</span>
+        <span>AI Tools</span>
+      </div>
+
+      <button id="start-btn" class="primary-btn big-btn">Start</button>
     </div>
-  </div>
+  </section>
 
   <!-- Login Screen -->
-  <div id="login-screen" class="login-screen hidden">
-    <div class="login-box">
-      <h2>Login to Zyvaron.AI</h2>
-      <p>Continue with your account</p>
+  <section id="login-screen" class="screen login-screen hidden">
+    <div class="glass-card login-card fade-up">
+      <div class="login-header">
+        <div class="logo-mark small">Z</div>
+        <h2>Login to Zyvaron.AI</h2>
+        <p>Continue with your account</p>
+      </div>
 
-      <form id="login-form">
-        <input type="text" placeholder="Username or Email" required />
-        <input type="password" placeholder="Password" required />
-        <button type="submit" class="primary-btn">Login</button>
+      <form id="login-form" class="login-form">
+        <input
+          id="email-input"
+          type="text"
+          placeholder="Username or Email"
+          autocomplete="username"
+          required
+        />
+        <input
+          id="password-input"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        />
+        <button type="submit" class="primary-btn full-btn">Login</button>
       </form>
 
-      <div class="divider">or</div>
+      <div class="divider"><span>or</span></div>
 
-      <button class="social-btn">Continue with Google</button>
-      <button class="social-btn">Continue with Apple</button>
+      <div class="social-grid">
+        <button id="google-login-btn" type="button" class="social-btn">
+          <span>G</span>
+          Continue with Google
+        </button>
+        <button id="apple-login-btn" type="button" class="social-btn">
+          <span></span>
+          Continue with Apple
+        </button>
+      </div>
+
+      <button id="guest-login-btn" type="button" class="ghost-btn full-btn">
+        Continue as Guest
+      </button>
 
       <p class="register-text">
-        Don’t have an account? <a href="#">Register</a>
+        Don’t have an account?
+        <a href="#" id="register-link">Register</a>
       </p>
-    </div>
-  </div>
 
-  <!-- Main App -->
-  <div id="app-screen" class="app-screen hidden">
+      <div id="login-status" class="status-text"></div>
+    </div>
+  </section>
+
+  <!-- App Screen -->
+  <section id="app-screen" class="app-screen hidden">
     <aside class="sidebar">
       <div>
-        <div class="logo">Zyvaron.AI</div>
-        <ul class="menu">
-          <li onclick="newChat()">➕ New Chat</li>
-          <li onclick="showMessage('Search feature coming soon')">🔍 Search</li>
-          <li onclick="showMessage('Useful tools coming soon')">🧩 Tools</li>
-          <li onclick="showMessage('History feature coming soon')">🕘 History</li>
-        </ul>
+        <div class="brand">
+          <div class="logo-mark small">Z</div>
+          <div>
+            <strong>Zyvaron.AI</strong>
+            <p class="muted">Smart assistant</p>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <button class="menu-item active" id="new-chat-btn">
+            <span>➕</span>
+            <span>New Chat</span>
+          </button>
+
+          <button class="menu-item" data-tool="Search feature coming soon">
+            <span>🔍</span>
+            <span>Search</span>
+          </button>
+
+          <button class="menu-item" data-tool="Useful tools coming soon">
+            <span>🧩</span>
+            <span>Tools</span>
+          </button>
+
+          <button class="menu-item" id="history-btn">
+            <span>🕘</span>
+            <span>History</span>
+          </button>
+        </nav>
       </div>
 
       <div class="account-box">
-        <p>👤 My Account</p>
+        <div class="account-avatar" id="account-avatar">Z</div>
+        <div class="account-info">
+          <strong id="account-name">My Account</strong>
+          <p id="account-plan">Free Plan</p>
+        </div>
       </div>
     </aside>
 
     <main class="main-content">
-      <div class="hero-text">
+      <header class="hero fade-up">
+        <span class="tag">Human-like AI Assistant</span>
         <h1>What can I do for you?</h1>
         <p>Ask Zyvaron anything</p>
-      </div>
+      </header>
 
-      <div id="chat-box" class="chat-box">
-        <div class="bot-message">Hello! I am Zyvaron AI. How can I help you today?</div>
-      </div>
+      <section id="chat-box" class="chat-box">
+        <div class="message bot-message">
+          <div class="message-avatar bot-avatar">Z</div>
+          <div class="message-bubble">
+            Hello! I am Zyvaron AI. How can I help you today?
+          </div>
+        </div>
+      </section>
 
-      <div class="tool-row">
-        <button onclick="showMessage('Screenshot option coming soon')">📸 Screenshot</button>
-        <button onclick="showMessage('Take photo option coming soon')">📷 Take Photo</button>
-        <button onclick="showMessage('Recent files option coming soon')">📁 Recent Files</button>
-        <button onclick="showMessage('Create image option coming soon')">🖼️ Create Image</button>
-        <button onclick="showMessage('Deep search option coming soon')">🌐 Deep Search</button>
-      </div>
+      <section class="tool-row">
+        <button class="tool-btn" data-tool="Screenshot option coming soon">📸 Screenshot</button>
+        <button class="tool-btn" data-tool="Take photo option coming soon">📷 Take Photo</button>
+        <button class="tool-btn" data-tool="Recent files option coming soon">📁 Recent Files</button>
+        <button class="tool-btn" data-tool="Create image option coming soon">🖼️ Create Image</button>
+        <button class="tool-btn" data-tool="Deep search option coming soon">🌐 Deep Search</button>
+      </section>
 
-      <div class="chat-input-area">
-        <input id="user-input" type="text" placeholder="Ask Zyvaron" />
-        <button onclick="sendMessage()">Send</button>
-      </div>
+      <section class="chat-input-wrap">
+        <div class="chat-input-box">
+          <button id="plus-btn" class="plus-btn" title="More options">+</button>
+          <input id="user-input" type="text" placeholder="Ask Zyvaron" />
+          <button id="send-btn" class="send-btn">Send</button>
+        </div>
+
+        <div id="extra-menu" class="extra-menu hidden">
+          <button data-tool="Screenshot option coming soon">Screenshot</button>
+          <button data-tool="PPT option coming soon">PPT</button>
+          <button data-tool="Take photo option coming soon">Take Photo</button>
+          <button data-tool="Recent files option coming soon">Recent Files</button>
+          <button data-tool="Create image option coming soon">Create Image</button>
+          <button data-tool="Deep search option coming soon">Deep Search</button>
+        </div>
+
+        <p class="note-text">
+          Fast AI-style demo UI. Real AI API can be added later.
+        </p>
+      </section>
     </main>
-  </div>
+  </section>
 
-  <script src="script.js"></script>
-  <footer style="text-align:center; padding:20px; color:#777;">
-  © 2026 Zyvaron.AI — All rights reserved
-</footer>
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="./script.js"></script>
 </body>
 </html>
