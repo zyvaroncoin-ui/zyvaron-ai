@@ -222,7 +222,17 @@ chat.appendChild(typing)
 
 setTimeout(()=>{
 typing.remove()
-addMsg("Demo: "+t,"bot")
+// REAL AI CALL
+const res = await fetch("http://localhost:3000/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ message: t })
+});
+
+const data = await res.json();
+addMsg(data.reply, "bot");
 saveRecent(t)
 },800)
 }
