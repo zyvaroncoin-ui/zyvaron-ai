@@ -189,13 +189,27 @@ start(r.user.displayName)
 }catch{alert("Google fail")}
 }
 
-function start(name){
-user.innerText=name
-hi.innerText="Hi "+name
-av.innerText=name[0]
-show("app")
-}
+async function start(name){
 
+  // UI update
+  document.getElementById("user").innerText = name;
+  document.getElementById("hi").innerText = "Hi " + name;
+  document.getElementById("av").innerText = name[0].toUpperCase();
+
+  // 🔥 SAVE USER DATA
+  try{
+    await setDoc(doc(db, "users", name), {
+      name: name,
+      loginTime: new Date().toISOString(),
+      plan: "Free"
+    });
+  }catch(e){
+    console.log("Error saving user");
+  }
+
+  show("app");
+}
+  
 // Chat
 window.send = ()=>{
 let t=input.value.trim()
