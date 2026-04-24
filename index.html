@@ -23,7 +23,7 @@ input{width:100%;padding:12px;margin:6px 0;border-radius:12px;border:0;backgroun
 button{padding:11px 14px;border-radius:12px;border:0;background:linear-gradient(135deg,#00c6ff,#7b2cff);color:white;margin:5px;cursor:pointer;font-weight:bold}
 button:hover{transform:scale(1.04)}
 .app{display:flex;width:100%;height:100%}
-.sidebar{width:270px;background:#0004;padding:12px;display:flex;flex-direction:column;justify-content:space-between;backdrop-filter:blur(18px)}
+.sidebar{width:270px;background:#0004;padding:12px;display:flex;flex-direction:column;justify-content:space-between;backdrop-filter:blur(18px);position:relative}
 .sidebar button{width:100%;text-align:left}
 .main{flex:1;padding:12px;display:flex;flex-direction:column}
 .chat{flex:1;background:#0004;overflow:auto;padding:12px;border-radius:15px}
@@ -32,10 +32,16 @@ button:hover{transform:scale(1.04)}
 .botMsg{color:#7cff00}
 .tools{display:none;flex-wrap:wrap;margin-top:8px}
 .tools.show{display:flex}
-.account{background:#0005;padding:10px;border-radius:12px;display:flex;gap:10px;align-items:center}
+.account{background:#0005;padding:10px;border-radius:12px;display:flex;gap:10px;align-items:center;cursor:pointer}
 .avatar{width:42px;height:42px;border-radius:50%;background:#00e5ff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:bold}
-.recent{font-size:12px;max-height:150px;overflow:auto}
-.recent div{background:#0005;margin:4px 0;padding:6px;border-radius:8px;cursor:pointer}
+.user-menu{display:none;position:absolute;bottom:82px;left:12px;right:12px;background:#050816;border:1px solid #ffffff22;border-radius:14px;padding:10px;box-shadow:0 15px 45px #0009;z-index:10}
+.user-menu.show{display:block}
+.user-menu button{width:100%;text-align:left;background:#ffffff12}
+.recent{font-size:12px;max-height:180px;overflow:auto}
+.recent-row{background:#0005;margin:4px 0;padding:6px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:5px}
+.recent-row span{flex:1;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.delete-btn{background:#ff3b3b!important;padding:4px 7px!important;margin:0!important;width:auto!important}
+.clear-btn{width:100%;background:#ff4444!important;margin-top:6px!important;text-align:center!important}
 .input-row{display:flex;gap:8px;margin-top:8px}
 .input-row input{flex:1}
 @media(max-width:800px){
@@ -94,12 +100,20 @@ body{overflow:auto}
         <div id="recent" class="recent"></div>
       </div>
 
-      <div class="account">
+      <div class="account" onclick="toggleUserMenu()">
         <div class="avatar" id="av">U</div>
         <div>
           <b id="user">User</b><br>
           <small>Free Plan</small>
         </div>
+      </div>
+
+      <div id="userMenu" class="user-menu">
+        <button onclick="msg('Profile feature coming soon')">👤 Profile</button>
+        <button onclick="msg('AI menu: image, file, web, Excel and PPT tools coming soon')">🤖 AI Menu</button>
+        <button onclick="msg('Upgrade premium plan coming soon')">💎 Upgrade Plan</button>
+        <button onclick="msg('Settings coming soon')">⚙️ Settings</button>
+        <button onclick="logout()">🚪 Logout</button>
       </div>
     </div>
 
@@ -137,7 +151,8 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore,
@@ -224,7 +239,7 @@ window.googleLogin = async function(){
     const res = await signInWithPopup(auth,provider);
     startApp(res.user);
   }catch(e){
-    alert("Google login failed. Add domain in Firebase Authorized domains.");
+    alert("Google login failed. Add zyvaron.co.in and zyvaroncoin-ui.github.io in Firebase Authorized domains.");
   }
 };
 
@@ -340,6 +355,19 @@ window.toggleTools = function(){
   document.getElementById("tools").classList.toggle("show");
 };
 
+window.toggleUserMenu = function(){
+  document.getElementById("userMenu").classList.toggle("show");
+};
+
+window.logout = async function(){
+  try{ await signOut(auth); }catch(e){}
+  currentUserId = "guest";
+  currentUserName = "User";
+  document.getElementById("chat").innerHTML = "";
+  document.getElementById("userMenu").classList.remove("show");
+  show("login");
+};
+
 function saveRecent(text){
   let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || "[]");
   arr.unshift(text);
@@ -349,26 +377,56 @@ function saveRecent(text){
 }
 
 function renderRecent(){
-  let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || []);
+  let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || "[]");
 
-  document.getElementById("recent").innerHTML =
-    arr.map((x,i)=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span onclick="useRecent('${x}')">${x}</span>
-        <button onclick="deleteOne(${i})" style="padding:2px 6px;background:red;">X</button>
-      </div>
-    `).join("");
+  const recentBox = document.getElementById("recent");
 
-  // Add DELETE ALL button
-  if(arr.length > 0){
-    document.getElementById("recent").innerHTML += `
-      <button onclick="deleteAll()" style="width:100%;margin-top:5px;background:#ff4444;">
-        Clear All
-      </button>
-    `;
+  if(arr.length === 0){
+    recentBox.innerHTML = "<div>No recent chats</div>";
+    return;
   }
+
+  recentBox.innerHTML = arr.map((x,i)=>`
+    <div class="recent-row">
+      <span onclick="useRecent(${i})">${escapeHtml(x)}</span>
+      <button class="delete-btn" onclick="deleteOneRecent(${i})">X</button>
+    </div>
+  `).join("");
+
+  recentBox.innerHTML += `<button class="clear-btn" onclick="deleteAllRecent()">Clear All</button>`;
 }
-  
+
+window.useRecent = function(index){
+  let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || "[]");
+  document.getElementById("input").value = arr[index] || "";
+};
+
+window.deleteOneRecent = function(index){
+  let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || "[]");
+  arr.splice(index,1);
+  localStorage.setItem("zyvaron_recent",JSON.stringify(arr));
+  renderRecent();
+};
+
+window.deleteAllRecent = function(){
+  localStorage.removeItem("zyvaron_recent");
+  renderRecent();
+};
+
+function escapeHtml(text){
+  return text.replace(/[&<>"']/g,m=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
+
+document.getElementById("input").addEventListener("keydown",e=>{
+  if(e.key==="Enter") window.send();
+});
+
 renderRecent();
 </script>
 
