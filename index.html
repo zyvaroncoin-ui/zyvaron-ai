@@ -300,7 +300,7 @@ window.send = async function(){
 
   const typing = document.createElement("div");
   typing.className = "msg botMsg";
-  typing.textContent = "Zyvaron: thinking...";
+  typing.innerHTML = 'Zyvaron: thinking<span class="typing"></span>';
   document.getElementById("chat").appendChild(typing);
 
   setTimeout(async ()=>{
