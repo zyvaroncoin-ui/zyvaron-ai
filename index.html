@@ -199,7 +199,24 @@ color:black;font-weight:bold;
     </div>
   </div>
 </div>
+  
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBSLcHRokXv81O4dr0RX30W3YIE6ujZxhw",
+  authDomain: "zyvaron-ai.firebaseapp.com",
+  projectId: "zyvaron-ai",
+  storageBucket: "zyvaron-ai.firebasestorage.app",
+  messagingSenderId: "997983383",
+  appId: "1:997983383:web:46a0c5e8c59382e7fa55d2"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 <script>
 
 /* SCREEN CONTROL */
