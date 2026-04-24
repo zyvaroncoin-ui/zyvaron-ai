@@ -1,187 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zyvaron.AI</title>
-  <meta
-    name="description"
-    content="Zyvaron.AI - Ask anything. Create faster. Think smarter."
-  />
-  <link rel="stylesheet" href="./style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zyvaron.AI</title>
+
+<link rel="stylesheet" href="./style.css">
+
+<style>
+/* ===== 3D BACKGROUND ===== */
+body::before {
+  content: "";
+  position: fixed;
+  width: 300%;
+  height: 300%;
+  top: -100%;
+  left: -100%;
+  background: radial-gradient(circle, #dfffe9, transparent 70%);
+  animation: moveBg 15s linear infinite;
+  z-index: -1;
+}
+
+@keyframes moveBg {
+  0% { transform: translate(0,0); }
+  50% { transform: translate(50px,50px); }
+  100% { transform: translate(0,0); }
+}
+
+/* 3D tilt container */
+.tilt {
+  transition: transform 0.2s ease;
+  transform-style: preserve-3d;
+}
+</style>
 </head>
+
 <body>
-  <div class="bg-blur bg-blur-1"></div>
-  <div class="bg-blur bg-blur-2"></div>
 
-  <!-- Welcome Screen -->
-  <section id="welcome-screen" class="screen welcome-screen">
-    <div class="glass-card welcome-card fade-up">
-      <div class="brand-top">
-        <div class="logo-mark">Z</div>
-        <div>
-          <h1>Welcome to Zyvaron AI</h1>
-          <p>Ask anything. Create faster. Think smarter with Zyvaron AI.</p>
-        </div>
+<!-- ===== WELCOME ===== -->
+<section id="welcome-screen" class="welcome-screen">
+  <div class="welcome-card tilt">
+    <div class="logo-mark">Z</div>
+    <h1>Welcome to Zyvaron AI</h1>
+    <p>Ask anything. Create faster. Think smarter.</p>
+    <button id="start-btn" class="primary-btn">Start</button>
+  </div>
+</section>
+
+<!-- ===== LOGIN ===== -->
+<section id="login-screen" class="login-screen hidden">
+  <div class="login-box tilt">
+    <div class="logo-mark small">Z</div>
+    <h2>Login to Zyvaron.AI</h2>
+
+    <form id="login-form">
+      <input type="text" placeholder="Username or Email" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit" class="primary-btn">Login</button>
+    </form>
+
+    <div class="divider">or</div>
+
+    <button class="social-btn">Google Login</button>
+    <button class="social-btn">Apple Login</button>
+  </div>
+</section>
+
+<!-- ===== APP ===== -->
+<section id="app-screen" class="app-screen hidden">
+
+  <!-- Sidebar -->
+  <aside class="sidebar tilt">
+    <div class="brand">Zyvaron.AI</div>
+
+    <button class="menu-item" onclick="newChat()">➕ New Chat</button>
+    <button class="menu-item" onclick="showToolMessage('Search coming soon')">🔍 Search</button>
+    <button class="menu-item" onclick="showToolMessage('Tools coming soon')">🧩 Tools</button>
+    <button class="menu-item" onclick="showToolMessage('History coming soon')">🕘 History</button>
+
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <h1 class="hero">What can I do for you?</h1>
+
+    <div id="chat-box" class="chat-box tilt">
+      <div class="message bot-message">
+        <div class="message-avatar">Z</div>
+        <div class="message-bubble">Hello! I am Zyvaron AI.</div>
       </div>
-
-      <div class="hero-pills">
-        <span>Human-like UI</span>
-        <span>Fast Chat</span>
-        <span>AI Tools</span>
-      </div>
-
-      <button id="start-btn" class="primary-btn big-btn">Start</button>
     </div>
-  </section>
 
-  <!-- Login Screen -->
-  <section id="login-screen" class="screen login-screen hidden">
-    <div class="glass-card login-card fade-up">
-      <div class="login-header">
-        <div class="logo-mark small">Z</div>
-        <h2>Login to Zyvaron.AI</h2>
-        <p>Continue with your account</p>
-      </div>
-
-      <form id="login-form" class="login-form">
-        <input
-          id="email-input"
-          type="text"
-          placeholder="Username or Email"
-          autocomplete="username"
-          required
-        />
-        <input
-          id="password-input"
-          type="password"
-          placeholder="Password"
-          autocomplete="current-password"
-          required
-        />
-        <button type="submit" class="primary-btn full-btn">Login</button>
-      </form>
-
-      <div class="divider"><span>or</span></div>
-
-      <div class="social-grid">
-        <button id="google-login-btn" type="button" class="social-btn">
-          <span>G</span>
-          Continue with Google
-        </button>
-        <button id="apple-login-btn" type="button" class="social-btn">
-          <span></span>
-          Continue with Apple
-        </button>
-      </div>
-
-      <button id="guest-login-btn" type="button" class="ghost-btn full-btn">
-        Continue as Guest
-      </button>
-
-      <p class="register-text">
-        Don’t have an account?
-        <a href="#" id="register-link">Register</a>
-      </p>
-
-      <div id="login-status" class="status-text"></div>
+    <div class="tool-row">
+      <button onclick="showToolMessage('Screenshot coming soon')">📸</button>
+      <button onclick="showToolMessage('Camera coming soon')">📷</button>
+      <button onclick="showToolMessage('Files coming soon')">📁</button>
+      <button onclick="showToolMessage('Image AI coming soon')">🖼️</button>
     </div>
-  </section>
 
-  <!-- App Screen -->
-  <section id="app-screen" class="app-screen hidden">
-    <aside class="sidebar">
-      <div>
-        <div class="brand">
-          <div class="logo-mark small">Z</div>
-          <div>
-            <strong>Zyvaron.AI</strong>
-            <p class="muted">Smart assistant</p>
-          </div>
-        </div>
+    <div class="chat-input-box">
+      <input id="user-input" placeholder="Ask Zyvaron...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
 
-        <nav class="menu">
-          <button class="menu-item active" id="new-chat-btn">
-            <span>➕</span>
-            <span>New Chat</span>
-          </button>
+  </main>
+</section>
 
-          <button class="menu-item" data-tool="Search feature coming soon">
-            <span>🔍</span>
-            <span>Search</span>
-          </button>
+<script src="./script.js"></script>
 
-          <button class="menu-item" data-tool="Useful tools coming soon">
-            <span>🧩</span>
-            <span>Tools</span>
-          </button>
+<script>
+/* ===== 3D MOUSE EFFECT ===== */
+document.addEventListener("mousemove", (e) => {
+  const x = (window.innerWidth / 2 - e.pageX) / 30;
+  const y = (window.innerHeight / 2 - e.pageY) / 30;
 
-          <button class="menu-item" id="history-btn">
-            <span>🕘</span>
-            <span>History</span>
-          </button>
-        </nav>
-      </div>
+  document.querySelectorAll(".tilt").forEach(el => {
+    el.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+  });
+});
+</script>
 
-      <div class="account-box">
-        <div class="account-avatar" id="account-avatar">Z</div>
-        <div class="account-info">
-          <strong id="account-name">My Account</strong>
-          <p id="account-plan">Free Plan</p>
-        </div>
-      </div>
-    </aside>
-
-    <main class="main-content">
-      <header class="hero fade-up">
-        <span class="tag">Human-like AI Assistant</span>
-        <h1>What can I do for you?</h1>
-        <p>Ask Zyvaron anything</p>
-      </header>
-
-      <section id="chat-box" class="chat-box">
-        <div class="message bot-message">
-          <div class="message-avatar bot-avatar">Z</div>
-          <div class="message-bubble">
-            Hello! I am Zyvaron AI. How can I help you today?
-          </div>
-        </div>
-      </section>
-
-      <section class="tool-row">
-        <button class="tool-btn" data-tool="Screenshot option coming soon">📸 Screenshot</button>
-        <button class="tool-btn" data-tool="Take photo option coming soon">📷 Take Photo</button>
-        <button class="tool-btn" data-tool="Recent files option coming soon">📁 Recent Files</button>
-        <button class="tool-btn" data-tool="Create image option coming soon">🖼️ Create Image</button>
-        <button class="tool-btn" data-tool="Deep search option coming soon">🌐 Deep Search</button>
-      </section>
-
-      <section class="chat-input-wrap">
-        <div class="chat-input-box">
-          <button id="plus-btn" class="plus-btn" title="More options">+</button>
-          <input id="user-input" type="text" placeholder="Ask Zyvaron" />
-          <button id="send-btn" class="send-btn">Send</button>
-        </div>
-
-        <div id="extra-menu" class="extra-menu hidden">
-          <button data-tool="Screenshot option coming soon">Screenshot</button>
-          <button data-tool="PPT option coming soon">PPT</button>
-          <button data-tool="Take photo option coming soon">Take Photo</button>
-          <button data-tool="Recent files option coming soon">Recent Files</button>
-          <button data-tool="Create image option coming soon">Create Image</button>
-          <button data-tool="Deep search option coming soon">Deep Search</button>
-        </div>
-
-        <p class="note-text">
-          Fast AI-style demo UI. Real AI API can be added later.
-        </p>
-      </section>
-    </main>
-  </section>
-
-  <!-- Toast -->
-  <div id="toast" class="toast hidden"></div>
-
-  <script src="./script.js"></script>
 </body>
 </html>
