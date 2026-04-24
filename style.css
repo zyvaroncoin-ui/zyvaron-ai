@@ -176,7 +176,12 @@ input{
 
 /* ===== MESSAGE ===== */
 .msg{
-  margin:8px 0;
+  margin:7px 0;
+  line-height:1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .user{
