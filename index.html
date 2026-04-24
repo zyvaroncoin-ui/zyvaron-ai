@@ -5,83 +5,243 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyvaron.AI</title>
 
-<link rel="stylesheet" href="./style.css">
-
 <style>
-body::before {
-  content: "";
-  position: fixed;
-  width: 300%;
-  height: 300%;
-  top: -100%;
-  left: -100%;
-  background: radial-gradient(circle, #dfffe9, transparent 70%);
-  animation: moveBg 15s linear infinite;
-  z-index: -1;
+*{box-sizing:border-box;font-family:Inter,Arial}
+body{
+  margin:0;color:white;
+  background:linear-gradient(135deg,#070b1f,#111a3a,#1b0f3a);
+  overflow:hidden;
 }
 
-@keyframes moveBg {
-  0% { transform: translate(0,0); }
-  50% { transform: translate(50px,50px); }
-  100% { transform: translate(0,0); }
+/* Animated background */
+.bg{
+  position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(circle at 20% 20%,#00e5ff55,transparent 30%),
+    radial-gradient(circle at 80% 30%,#ff00cc55,transparent 25%),
+    radial-gradient(circle at 50% 90%,#7cff0050,transparent 30%);
+  animation:move 8s infinite alternate ease-in-out;
+}
+@keyframes move{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(90deg)}}
+
+/* Glass UI */
+.card{
+  background:rgba(255,255,255,.1);
+  backdrop-filter:blur(20px);
+  border-radius:25px;
+  padding:20px;
+  box-shadow:0 20px 60px #0008;
 }
 
-.tilt {
-  transition: transform 0.2s ease;
-  transform-style: preserve-3d;
+/* Center screens */
+.screen{
+  position:fixed;
+  width:100%;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
+
+.hidden{display:none}
+
+/* Buttons */
+button{
+  border:0;
+  padding:12px;
+  border-radius:15px;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  background:linear-gradient(135deg,#00c6ff,#7b2cff);
+  transition:.2s;
+}
+button:hover{transform:scale(1.05)}
+
+/* Input */
+input{
+  width:100%;
+  padding:12px;
+  border-radius:15px;
+  border:0;
+  outline:0;
+}
+
+/* Chat */
+.chat{
+  height:300px;
+  overflow:auto;
+  background:rgba(0,0,0,.3);
+  border-radius:15px;
+  padding:15px;
+}
+
+/* Messages */
+.msg{margin:8px 0}
+.user{color:#00e5ff}
+.bot{color:#7cff00}
+
+/* Layout */
+.app{
+  display:flex;
+  width:100%;
+  height:100%;
+}
+
+.sidebar{
+  width:200px;
+  padding:20px;
+}
+
+.main{
+  flex:1;
+  padding:20px;
+}
+
+/* Tools */
+.tools{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:10px;
+  margin:10px 0;
+}
+
+/* Stats */
+.stats{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+.stat{
+  flex:1;
+  background:rgba(255,255,255,.1);
+  padding:10px;
+  border-radius:12px;
+  text-align:center;
+}
+
+/* Loader */
+.loader{
+  display:none;
+  margin:10px auto;
+  width:40px;height:40px;
+  border:4px solid #fff3;
+  border-top-color:#00e5ff;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 </style>
 </head>
 
 <body>
+<div class="bg"></div>
 
-<!-- Welcome -->
-<section id="welcome-screen">
-  <div class="welcome-card tilt">
-    <h1>Welcome to Zyvaron AI</h1>
-    <button id="start-btn">Start</button>
+<!-- WELCOME -->
+<div id="welcome" class="screen">
+  <div class="card">
+    <h1>Zyvaron.AI</h1>
+    <p>Smart AI Assistant</p>
+    <button onclick="goLogin()">Start</button>
   </div>
-</section>
+</div>
 
-<!-- Login -->
-<section id="login-screen" class="hidden">
-  <div class="login-box tilt">
+<!-- LOGIN -->
+<div id="login" class="screen hidden">
+  <div class="card">
     <h2>Login</h2>
-    <form id="login-form">
-      <input placeholder="Username" required>
-      <input type="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
+    <input placeholder="Username"><br><br>
+    <input type="password" placeholder="Password"><br><br>
+    <button onclick="goApp()">Login</button>
+    <br><br>
+    <button onclick="alert('Firebase needed')">Google</button>
   </div>
-</section>
+</div>
 
-<!-- App -->
-<section id="app-screen" class="hidden">
+<!-- APP -->
+<div id="app" class="screen hidden">
   <div class="app">
 
-    <aside class="sidebar tilt">
+    <div class="sidebar card">
       <button onclick="newChat()">New Chat</button>
-    </aside>
+    </div>
 
-    <main>
-      <div id="chat-box"></div>
+    <div class="main">
+      <div id="chat" class="chat"></div>
 
-      <input id="user-input" placeholder="Ask..." />
-      <button onclick="sendMessage()">Send</button>
-    </main>
+      <div class="tools">
+        <button onclick="tool('summarize')">Summarize</button>
+        <button onclick="tool('rewrite')">Rewrite</button>
+        <button onclick="tool('grammar')">Grammar</button>
+        <button onclick="tool('uppercase')">UPPER</button>
+      </div>
+
+      <div class="loader" id="loader"></div>
+
+      <input id="input" placeholder="Ask Zyvaron...">
+      <button onclick="send()">Send</button>
+
+      <div class="stats">
+        <div class="stat"><b id="words">0</b><br>Words</div>
+        <div class="stat"><b id="chars">0</b><br>Chars</div>
+      </div>
+    </div>
 
   </div>
-</section>
-
-<script src="./script.js"></script>
+</div>
 
 <script>
-document.addEventListener("mousemove", (e) => {
-  const x = (window.innerWidth / 2 - e.pageX) / 30;
-  const y = (window.innerHeight / 2 - e.pageY) / 30;
-  document.querySelectorAll(".tilt").forEach(el => {
-    el.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-  });
+const input=document.getElementById("input");
+const chat=document.getElementById("chat");
+const loader=document.getElementById("loader");
+
+function goLogin(){
+  welcome.classList.add("hidden");
+  login.classList.remove("hidden");
+}
+function goApp(){
+  login.classList.add("hidden");
+  app.classList.remove("hidden");
+}
+
+function addMsg(text,type){
+  chat.innerHTML+=`<div class="msg ${type}">${text}</div>`;
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function send(){
+  let text=input.value.trim();
+  if(!text)return;
+
+  addMsg("You: "+text,"user");
+  input.value="";
+
+  loader.style.display="block";
+
+  setTimeout(()=>{
+    loader.style.display="none";
+    addMsg("Zyvaron: "+text,"bot");
+  },700);
+}
+
+function newChat(){
+  chat.innerHTML="New Chat Started";
+}
+
+function tool(type){
+  let text=input.value;
+  if(!text)return;
+
+  if(type==="uppercase") input.value=text.toUpperCase();
+  if(type==="rewrite") input.value=text.replace("u","you");
+  if(type==="grammar") input.value=text.replace("i","I");
+  if(type==="summarize") input.value=text.slice(0,50);
+}
+
+input.addEventListener("input",()=>{
+  document.getElementById("words").innerText=input.value.split(/\s+/).length;
+  document.getElementById("chars").innerText=input.value.length;
 });
 </script>
 
