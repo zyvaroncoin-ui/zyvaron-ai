@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="./style.css">
 
 <style>
-/* ===== 3D BACKGROUND ===== */
 body::before {
   content: "";
   position: fixed;
@@ -27,7 +26,6 @@ body::before {
   100% { transform: translate(0,0); }
 }
 
-/* 3D tilt container */
 .tilt {
   transition: transform 0.2s ease;
   transform-style: preserve-3d;
@@ -37,84 +35,50 @@ body::before {
 
 <body>
 
-<!-- ===== WELCOME ===== -->
-<section id="welcome-screen" class="welcome-screen">
+<!-- Welcome -->
+<section id="welcome-screen">
   <div class="welcome-card tilt">
-    <div class="logo-mark">Z</div>
     <h1>Welcome to Zyvaron AI</h1>
-    <p>Ask anything. Create faster. Think smarter.</p>
-    <button id="start-btn" class="primary-btn">Start</button>
+    <button id="start-btn">Start</button>
   </div>
 </section>
 
-<!-- ===== LOGIN ===== -->
-<section id="login-screen" class="login-screen hidden">
+<!-- Login -->
+<section id="login-screen" class="hidden">
   <div class="login-box tilt">
-    <div class="logo-mark small">Z</div>
-    <h2>Login to Zyvaron.AI</h2>
-
+    <h2>Login</h2>
     <form id="login-form">
-      <input type="text" placeholder="Username or Email" required>
+      <input placeholder="Username" required>
       <input type="password" placeholder="Password" required>
-      <button type="submit" class="primary-btn">Login</button>
+      <button type="submit">Login</button>
     </form>
-
-    <div class="divider">or</div>
-
-    <button class="social-btn">Google Login</button>
-    <button class="social-btn">Apple Login</button>
   </div>
 </section>
 
-<!-- ===== APP ===== -->
-<section id="app-screen" class="app-screen hidden">
+<!-- App -->
+<section id="app-screen" class="hidden">
+  <div class="app">
 
-  <!-- Sidebar -->
-  <aside class="sidebar tilt">
-    <div class="brand">Zyvaron.AI</div>
+    <aside class="sidebar tilt">
+      <button onclick="newChat()">New Chat</button>
+    </aside>
 
-    <button class="menu-item" onclick="newChat()">➕ New Chat</button>
-    <button class="menu-item" onclick="showToolMessage('Search coming soon')">🔍 Search</button>
-    <button class="menu-item" onclick="showToolMessage('Tools coming soon')">🧩 Tools</button>
-    <button class="menu-item" onclick="showToolMessage('History coming soon')">🕘 History</button>
+    <main>
+      <div id="chat-box"></div>
 
-  </aside>
-
-  <!-- Main -->
-  <main class="main-content">
-
-    <h1 class="hero">What can I do for you?</h1>
-
-    <div id="chat-box" class="chat-box tilt">
-      <div class="message bot-message">
-        <div class="message-avatar">Z</div>
-        <div class="message-bubble">Hello! I am Zyvaron AI.</div>
-      </div>
-    </div>
-
-    <div class="tool-row">
-      <button onclick="showToolMessage('Screenshot coming soon')">📸</button>
-      <button onclick="showToolMessage('Camera coming soon')">📷</button>
-      <button onclick="showToolMessage('Files coming soon')">📁</button>
-      <button onclick="showToolMessage('Image AI coming soon')">🖼️</button>
-    </div>
-
-    <div class="chat-input-box">
-      <input id="user-input" placeholder="Ask Zyvaron...">
+      <input id="user-input" placeholder="Ask..." />
       <button onclick="sendMessage()">Send</button>
-    </div>
+    </main>
 
-  </main>
+  </div>
 </section>
 
 <script src="./script.js"></script>
 
 <script>
-/* ===== 3D MOUSE EFFECT ===== */
 document.addEventListener("mousemove", (e) => {
   const x = (window.innerWidth / 2 - e.pageX) / 30;
   const y = (window.innerHeight / 2 - e.pageY) / 30;
-
   document.querySelectorAll(".tilt").forEach(el => {
     el.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
   });
