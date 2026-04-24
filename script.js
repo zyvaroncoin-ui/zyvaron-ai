@@ -34,30 +34,26 @@ function login(){
 }
 
 // ===== CHAT =====
-function send(){
+async function send(){
   const text = input.value.trim();
   if(!text) return;
 
   addMsg(text,"user");
-  saveRecent(text);
-
   input.value = "";
 
   addTyping();
 
-  setTimeout(()=>{
-    removeTyping();
+  const res = await fetch("/api/chat", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:text})
+  });
 
-    if(isBlocked(text)){
-      blockedCount++;
-      addMsg("❌ Blocked unsafe request ("+blockedCount+"/3)","bot");
+  const data = await res.json();
 
-      if(blockedCount >= 3){
-        addMsg("🚫 Account temporarily blocked (demo)","bot");
-      }
-      return;
-    }
-
+  removeTyping();
+  addMsg(data.reply,"bot");
+}
     addMsg(generateReply(text),"bot");
 
   },700);
