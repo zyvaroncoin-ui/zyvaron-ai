@@ -7,130 +7,109 @@
 
 <style>
 *{box-sizing:border-box;font-family:Inter,Arial}
-body{
-  margin:0;color:white;
-  background:linear-gradient(135deg,#070b1f,#111a3a,#1b0f3a);
-  overflow:hidden;
-}
+body{margin:0;color:#fff;overflow:hidden;background:#050816}
 
-/* Animated background */
+/* ===== 3D BACKGROUND ===== */
 .bg{
-  position:fixed;inset:0;z-index:-1;
-  background:
-    radial-gradient(circle at 20% 20%,#00e5ff55,transparent 30%),
-    radial-gradient(circle at 80% 30%,#ff00cc55,transparent 25%),
-    radial-gradient(circle at 50% 90%,#7cff0050,transparent 30%);
-  animation:move 8s infinite alternate ease-in-out;
+position:fixed;inset:0;z-index:-1;
+background:
+radial-gradient(circle at 20% 20%,#00e5ff55,transparent),
+radial-gradient(circle at 80% 30%,#ff00cc55,transparent),
+radial-gradient(circle at 50% 90%,#7cff0050,transparent),
+linear-gradient(135deg,#050816,#120926);
+animation:move 8s infinite alternate;
 }
-@keyframes move{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(90deg)}}
+@keyframes move{to{filter:hue-rotate(90deg);transform:scale(1.1)}}
 
-/* Glass UI */
-.card{
-  background:rgba(255,255,255,.1);
-  backdrop-filter:blur(20px);
-  border-radius:25px;
-  padding:20px;
-  box-shadow:0 20px 60px #0008;
-}
-
-/* Center screens */
+/* ===== SCREENS ===== */
 .screen{
-  position:fixed;
-  width:100%;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+position:fixed;inset:0;
+display:flex;align-items:center;justify-content:center;
+padding:20px;
 }
-
 .hidden{display:none}
 
-/* Buttons */
+/* ===== CARD ===== */
+.card{
+background:rgba(255,255,255,.1);
+backdrop-filter:blur(20px);
+border-radius:25px;
+padding:30px;
+box-shadow:0 20px 60px #0008;
+text-align:center;
+}
+
+/* ===== BUTTON ===== */
 button{
-  border:0;
-  padding:12px;
-  border-radius:15px;
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-  background:linear-gradient(135deg,#00c6ff,#7b2cff);
-  transition:.2s;
+border:0;padding:12px 18px;
+border-radius:15px;
+background:linear-gradient(135deg,#00c6ff,#7b2cff);
+color:white;font-weight:700;cursor:pointer;
+margin:5px;
 }
 button:hover{transform:scale(1.05)}
 
-/* Input */
+/* ===== INPUT ===== */
 input{
-  width:100%;
-  padding:12px;
-  border-radius:15px;
-  border:0;
-  outline:0;
+width:100%;
+padding:12px;
+border-radius:15px;
+border:0;
+margin:8px 0;
+background:rgba(0,0,0,.4);
+color:white;
 }
 
-/* Chat */
+/* ===== APP ===== */
+.app{display:flex;width:100%;height:100%}
+.sidebar{
+width:250px;
+background:rgba(255,255,255,.1);
+padding:15px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+.menu button{width:100%;margin:5px 0}
+
+.main{flex:1;padding:20px;display:flex;flex-direction:column}
+
+/* CHAT */
 .chat{
-  height:300px;
-  overflow:auto;
-  background:rgba(0,0,0,.3);
-  border-radius:15px;
-  padding:15px;
+flex:1;
+background:rgba(0,0,0,.3);
+border-radius:15px;
+padding:15px;
+overflow:auto;
 }
 
-/* Messages */
 .msg{margin:8px 0}
 .user{color:#00e5ff}
 .bot{color:#7cff00}
 
-/* Layout */
-.app{
-  display:flex;
-  width:100%;
-  height:100%;
-}
-
-.sidebar{
-  width:200px;
-  padding:20px;
-}
-
-.main{
-  flex:1;
-  padding:20px;
-}
-
-/* Tools */
+/* TOOLS */
 .tools{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-  gap:10px;
-  margin:10px 0;
+display:none;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:8px;
+margin-top:10px;
 }
+.tools.show{display:grid}
 
-/* Stats */
-.stats{
-  display:flex;
-  gap:10px;
-  margin-top:10px;
+/* ACCOUNT */
+.account{
+background:rgba(0,0,0,.3);
+padding:10px;
+border-radius:15px;
+display:flex;
+align-items:center;
+gap:10px;
 }
-.stat{
-  flex:1;
-  background:rgba(255,255,255,.1);
-  padding:10px;
-  border-radius:12px;
-  text-align:center;
+.avatar{
+width:40px;height:40px;border-radius:50%;
+background:#00e5ff;display:flex;align-items:center;justify-content:center;
+color:black;font-weight:bold;
 }
-
-/* Loader */
-.loader{
-  display:none;
-  margin:10px auto;
-  width:40px;height:40px;
-  border:4px solid #fff3;
-  border-top-color:#00e5ff;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
 
 </style>
 </head>
@@ -143,7 +122,16 @@ input{
   <div class="card">
     <h1>Zyvaron.AI</h1>
     <p>Smart AI Assistant</p>
-    <button onclick="goLogin()">Start</button>
+    <button onclick="show('intro')">Start</button>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div id="intro" class="screen hidden">
+  <div class="card">
+    <h2>What Zyvaron gives</h2>
+    <p>Chat • Code • Tools • AI UI • Projects • Search</p>
+    <button onclick="show('login')">Continue</button>
   </div>
 </div>
 
@@ -151,98 +139,105 @@ input{
 <div id="login" class="screen hidden">
   <div class="card">
     <h2>Login</h2>
-    <input placeholder="Username"><br><br>
-    <input type="password" placeholder="Password"><br><br>
-    <button onclick="goApp()">Login</button>
-    <br><br>
-    <button onclick="alert('Firebase needed')">Google</button>
+    <input id="name" placeholder="Username">
+    <input type="password" placeholder="Password">
+    <button onclick="login()">Login</button><br>
+    <button onclick="alert('Google login later')">Google</button>
+    <button onclick="alert('Apple login later')">Apple</button><br>
+    <button onclick="alert('Forgot password later')">Forgot</button>
+    <button onclick="alert('Register later')">Register</button>
   </div>
 </div>
 
-<!-- APP -->
+<!-- DASHBOARD -->
 <div id="app" class="screen hidden">
   <div class="app">
 
-    <div class="sidebar card">
-      <button onclick="newChat()">New Chat</button>
+    <div class="sidebar">
+      <div>
+        <h3>Zyvaron</h3>
+        <div class="menu">
+          <button onclick="newChat()">New Chat</button>
+          <button onclick="msg('History')">History</button>
+          <button onclick="msg('Project')">Project</button>
+          <button onclick="msg('Search')">Search</button>
+          <button onclick="toggleTools()">More</button>
+        </div>
+      </div>
+
+      <div class="account">
+        <div class="avatar" id="av">U</div>
+        <div>
+          <b id="user">User</b><br>
+          <small>Free Plan</small>
+        </div>
+      </div>
     </div>
 
     <div class="main">
+      <h2 id="hi">Hi User</h2>
+
       <div id="chat" class="chat"></div>
 
-      <div class="tools">
-        <button onclick="tool('summarize')">Summarize</button>
-        <button onclick="tool('rewrite')">Rewrite</button>
-        <button onclick="tool('grammar')">Grammar</button>
-        <button onclick="tool('uppercase')">UPPER</button>
+      <div>
+        <input id="input" placeholder="Ask Zyvaron...">
+        <button onclick="send()">Send</button>
+        <button onclick="toggleTools()">⋯</button>
       </div>
 
-      <div class="loader" id="loader"></div>
-
-      <input id="input" placeholder="Ask Zyvaron...">
-      <button onclick="send()">Send</button>
-
-      <div class="stats">
-        <div class="stat"><b id="words">0</b><br>Words</div>
-        <div class="stat"><b id="chars">0</b><br>Chars</div>
+      <div id="tools" class="tools">
+        <button onclick="msg('Screenshot')">Screenshot</button>
+        <button onclick="msg('File')">Attach File</button>
+        <button onclick="msg('Image AI')">Create Image</button>
+        <button onclick="msg('Camera')">Camera</button>
+        <button onclick="msg('Search')">Search</button>
+        <button onclick="msg('Deep Search')">Deep Search</button>
+        <button onclick="msg('Excel')">Excel</button>
+        <button onclick="msg('PPT')">PPT</button>
       </div>
+
     </div>
-
   </div>
 </div>
 
 <script>
-const input=document.getElementById("input");
-const chat=document.getElementById("chat");
-const loader=document.getElementById("loader");
 
-function goLogin(){
-  welcome.classList.add("hidden");
-  login.classList.remove("hidden");
-}
-function goApp(){
-  login.classList.add("hidden");
-  app.classList.remove("hidden");
+/* SCREEN CONTROL */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'))
+  document.getElementById(id).classList.remove('hidden')
 }
 
-function addMsg(text,type){
-  chat.innerHTML+=`<div class="msg ${type}">${text}</div>`;
-  chat.scrollTop=chat.scrollHeight;
+/* LOGIN */
+function login(){
+  let name=document.getElementById('name').value || "User"
+  document.getElementById('user').innerText=name
+  document.getElementById('hi').innerText="Hi "+name
+  document.getElementById('av').innerText=name[0]
+  show('app')
 }
 
+/* CHAT */
 function send(){
-  let text=input.value.trim();
-  if(!text)return;
+  let text=input.value.trim()
+  if(!text)return
 
-  addMsg("You: "+text,"user");
-  input.value="";
-
-  loader.style.display="block";
+  chat.innerHTML+=`<div class="msg user">You: ${text}</div>`
+  input.value=""
 
   setTimeout(()=>{
-    loader.style.display="none";
-    addMsg("Zyvaron: "+text,"bot");
-  },700);
+    chat.innerHTML+=`<div class="msg bot">Zyvaron: ${text}</div>`
+    chat.scrollTop=chat.scrollHeight
+  },500)
 }
 
-function newChat(){
-  chat.innerHTML="New Chat Started";
-}
+/* UTIL */
+function msg(t){chat.innerHTML+=`<div class="msg bot">${t} tool coming</div>`}
+function newChat(){chat.innerHTML="New Chat Started"}
+function toggleTools(){tools.classList.toggle("show")}
 
-function tool(type){
-  let text=input.value;
-  if(!text)return;
+input.addEventListener("keydown",e=>{if(e.key==="Enter")send()})
 
-  if(type==="uppercase") input.value=text.toUpperCase();
-  if(type==="rewrite") input.value=text.replace("u","you");
-  if(type==="grammar") input.value=text.replace("i","I");
-  if(type==="summarize") input.value=text.slice(0,50);
-}
-
-input.addEventListener("input",()=>{
-  document.getElementById("words").innerText=input.value.split(/\s+/).length;
-  document.getElementById("chars").innerText=input.value.length;
-});
 </script>
 
 </body>
