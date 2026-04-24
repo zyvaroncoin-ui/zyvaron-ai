@@ -8,252 +8,366 @@
 <style>
 *{box-sizing:border-box;font-family:Arial}
 body{margin:0;background:#050816;color:#fff;overflow:hidden}
-
-/* 3D Background */
 body::before{
-content:"";
-position:fixed;
-width:300%;
-height:300%;
-top:-100%;
-left:-100%;
+content:"";position:fixed;width:300%;height:300%;top:-100%;left:-100%;
 background:
 radial-gradient(circle at 20% 20%,#00e5ff55,transparent),
 radial-gradient(circle at 80% 30%,#ff00cc55,transparent),
 linear-gradient(135deg,#050816,#120926);
-animation:bg 10s infinite alternate;
-z-index:-1;
-}
-@keyframes bg{to{transform:translate(50px,50px) scale(1.1)}}
-
-/* Layout */
-.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
-.hidden{display:none}
-.card{background:#ffffff10;padding:30px;border-radius:20px;text-align:center;width:300px}
-
-/* Inputs */
-input{width:100%;padding:10px;margin:5px 0;border-radius:10px;border:0;background:#0005;color:white}
-
-/* Buttons */
-button{padding:10px;border-radius:10px;border:0;background:#00c6ff;color:white;margin:5px;cursor:pointer}
-
-/* App */
+animation:bg 10s infinite alternate;z-index:-1}
+@keyframes bg{to{transform:translate(50px,50px) scale(1.1);filter:hue-rotate(90deg)}}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px}
+.hidden{display:none!important}
+.card{background:#ffffff10;padding:30px;border-radius:20px;text-align:center;width:320px;backdrop-filter:blur(18px);box-shadow:0 20px 60px #0008}
+input{width:100%;padding:12px;margin:6px 0;border-radius:12px;border:0;background:#0006;color:white;outline:none}
+button{padding:11px 14px;border-radius:12px;border:0;background:linear-gradient(135deg,#00c6ff,#7b2cff);color:white;margin:5px;cursor:pointer;font-weight:bold}
+button:hover{transform:scale(1.04)}
 .app{display:flex;width:100%;height:100%}
-.sidebar{width:260px;background:#0003;padding:10px;display:flex;flex-direction:column;justify-content:space-between}
-.main{flex:1;padding:10px;display:flex;flex-direction:column}
-
-/* Chat */
-.chat{flex:1;background:#0003;overflow:auto;padding:10px}
-.msg{margin:5px 0}
-.user{color:#00e5ff}
-.bot{color:#7cff00}
-
-/* Tools */
-.tools{display:none;flex-wrap:wrap}
+.sidebar{width:270px;background:#0004;padding:12px;display:flex;flex-direction:column;justify-content:space-between;backdrop-filter:blur(18px)}
+.sidebar button{width:100%;text-align:left}
+.main{flex:1;padding:12px;display:flex;flex-direction:column}
+.chat{flex:1;background:#0004;overflow:auto;padding:12px;border-radius:15px}
+.msg{margin:7px 0;line-height:1.5}
+.userMsg{color:#00e5ff}
+.botMsg{color:#7cff00}
+.tools{display:none;flex-wrap:wrap;margin-top:8px}
 .tools.show{display:flex}
-
-/* Account */
-.account{background:#0004;padding:10px;border-radius:10px}
-.avatar{width:40px;height:40px;border-radius:50%;background:#00e5ff;display:flex;align-items:center;justify-content:center;color:black;font-weight:bold}
-
-/* Recent */
+.account{background:#0005;padding:10px;border-radius:12px;display:flex;gap:10px;align-items:center}
+.avatar{width:42px;height:42px;border-radius:50%;background:#00e5ff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:bold}
 .recent{font-size:12px;max-height:150px;overflow:auto}
-.recent div{background:#0004;margin:3px;padding:5px;border-radius:5px}
+.recent div{background:#0005;margin:4px 0;padding:6px;border-radius:8px;cursor:pointer}
+.input-row{display:flex;gap:8px;margin-top:8px}
+.input-row input{flex:1}
+@media(max-width:800px){
+body{overflow:auto}
+.app{flex-direction:column}
+.sidebar{width:100%}
+.screen{position:relative;min-height:100vh}
+}
 </style>
 </head>
 
 <body>
 
-<!-- WELCOME -->
 <div id="welcome" class="screen">
-<div class="card">
-<h1>Zyvaron AI</h1>
-<p>Smart AI Assistant</p>
-<button onclick="show('intro')">Start</button>
-</div>
+  <div class="card">
+    <h1>Zyvaron AI</h1>
+    <p>Smart AI Assistant</p>
+    <button onclick="show('intro')">Start</button>
+  </div>
 </div>
 
-<!-- INTRO -->
 <div id="intro" class="screen hidden">
-<div class="card">
-<h2>What Zyvaron Gives</h2>
-<p>Chat • Coding • Tools • Projects • Search</p>
-<button onclick="show('login')">Continue</button>
-</div>
+  <div class="card">
+    <h2>What Zyvaron Gives</h2>
+    <p>Chat • Coding • Tools • Projects • Search • Dashboard</p>
+    <button onclick="show('login')">Continue</button>
+  </div>
 </div>
 
-<!-- LOGIN -->
 <div id="login" class="screen hidden">
-<div class="card">
-<h2>Login</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="emailLogin()">Login</button><br>
-<button onclick="googleLogin()">Google</button>
-<button onclick="alert('Apple login later')">Apple</button><br>
-<button onclick="alert('Forgot password later')">Forgot</button>
-<button onclick="alert('Register later')">Register</button>
-</div>
+  <div class="card">
+    <h2>Login</h2>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="emailLogin()">Login</button><br>
+    <button onclick="googleLogin()">Google</button>
+    <button onclick="appleLogin()">Apple</button><br>
+    <button onclick="forgotPassword()">Forgot</button>
+    <button onclick="registerUser()">Register</button>
+  </div>
 </div>
 
-<!-- APP -->
 <div id="app" class="screen hidden">
-<div class="app">
+  <div class="app">
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+    <div class="sidebar">
+      <div>
+        <h3>⚡ Zyvaron</h3>
+        <button onclick="newChat()">➕ New Chat</button>
+        <button onclick="msg('History opened')">🕘 History</button>
+        <button onclick="msg('Project area coming soon')">📂 Project</button>
+        <button onclick="msg('Search chat coming soon')">🔍 Search Chat</button>
+        <button onclick="toggleTools()">⋯ More Tools</button>
 
-<div>
-<h3>Zyvaron</h3>
-<button onclick="newChat()">New Chat</button>
-<button onclick="msg('History')">History</button>
-<button onclick="msg('Project')">Project</button>
-<button onclick="msg('Search')">Search Chat</button>
-<button onclick="toggleTools()">More</button>
+        <h4>Recent Chats</h4>
+        <div id="recent" class="recent"></div>
+      </div>
 
-<h4>Recent</h4>
-<div id="recent" class="recent"></div>
+      <div class="account">
+        <div class="avatar" id="av">U</div>
+        <div>
+          <b id="user">User</b><br>
+          <small>Free Plan</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <h2 id="hi">Hi User</h2>
+
+      <div id="chat" class="chat"></div>
+
+      <div class="input-row">
+        <button onclick="toggleTools()">⋯</button>
+        <input id="input" placeholder="Ask Zyvaron...">
+        <button onclick="send()">Send</button>
+      </div>
+
+      <div id="tools" class="tools">
+        <button onclick="tool('Screenshot')">📸 Screenshot</button>
+        <button onclick="tool('Attach File')">📎 Attach File</button>
+        <button onclick="tool('Create Image')">🖼️ Create Image</button>
+        <button onclick="tool('Recent Files')">📁 Recent Files</button>
+        <button onclick="tool('Camera')">📷 Camera</button>
+        <button onclick="tool('Deep Search')">🔎 Deep Search</button>
+        <button onclick="tool('Excel')">📊 Excel</button>
+        <button onclick="tool('PPT')">📽️ PPT</button>
+      </div>
+
+    </div>
+  </div>
 </div>
 
-<div class="account">
-<div class="avatar" id="av">U</div>
-<div>
-<b id="user">User</b><br>
-<small>Free Plan</small>
-</div>
-</div>
-
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-<h2 id="hi">Hi User</h2>
-
-<div id="chat" class="chat"></div>
-
-<input id="input" placeholder="Ask Zyvaron...">
-<button onclick="send()">Send</button>
-<button onclick="toggleTools()">⋯</button>
-
-<div id="tools" class="tools">
-<button onclick="tool('Screenshot')">Screenshot</button>
-<button onclick="tool('File')">Attach File</button>
-<button onclick="tool('Image AI')">Create Image</button>
-<button onclick="tool('Camera')">Camera</button>
-<button onclick="tool('Deep Search')">Deep Search</button>
-<button onclick="tool('Excel')">Excel</button>
-<button onclick="tool('PPT')">PPT</button>
-</div>
-
-</div>
-
-</div>
-</div>
-
-<script type="import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";">
-
-// Firebase
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBSLcHRokXv81O4dr0RX30W3YIE6ujZxhw",
   authDomain: "zyvaron-ai.firebaseapp.com",
   projectId: "zyvaron-ai",
+  storageBucket: "zyvaron-ai.firebasestorage.app",
+  messagingSenderId: "997983383",
   appId: "1:997983383:web:46a0c5e8c59382e7fa55d2"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 const provider = new GoogleAuthProvider();
 
-// Screen
-window.show = id=>{
-document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'))
-document.getElementById(id).classList.remove('hidden')
-}
+let currentUserId = "guest";
+let currentUserName = "User";
 
-// Login
-window.emailLogin = async ()=>{
-try{
-let u=await signInWithEmailAndPassword(auth,email.value,password.value)
-start(u.user.email)
-}catch{alert("Login failed")}
-}
+window.show = function(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+};
 
-window.googleLogin = async ()=>{
-try{
-let r=await signInWithPopup(auth,provider)
-start(r.user.displayName)
-}catch{alert("Google fail")}
-}
+window.emailLogin = async function(){
+  const emailVal = document.getElementById("email").value.trim();
+  const passVal = document.getElementById("password").value.trim();
 
-async function start(name){
+  if(!emailVal || !passVal){
+    alert("Enter email and password");
+    return;
+  }
 
-  // UI update
-  document.getElementById("user").innerText = name;
-  document.getElementById("hi").innerText = "Hi " + name;
-  document.getElementById("av").innerText = name[0].toUpperCase();
-
-  // 🔥 SAVE USER DATA
   try{
-    await setDoc(doc(db, "users", name), {
-      name: name,
-      loginTime: new Date().toISOString(),
-      plan: "Free"
-    });
+    const res = await signInWithEmailAndPassword(auth,emailVal,passVal);
+    startApp(res.user);
   }catch(e){
-    console.log("Error saving user");
+    alert("Login failed. Create user in Firebase or click Register.");
+  }
+};
+
+window.registerUser = async function(){
+  const emailVal = document.getElementById("email").value.trim();
+  const passVal = document.getElementById("password").value.trim();
+
+  if(!emailVal || !passVal){
+    alert("Enter email and password for register");
+    return;
+  }
+
+  try{
+    const res = await createUserWithEmailAndPassword(auth,emailVal,passVal);
+    startApp(res.user);
+  }catch(e){
+    alert("Register failed. Password must be 6+ characters.");
+  }
+};
+
+window.forgotPassword = async function(){
+  const emailVal = document.getElementById("email").value.trim();
+
+  if(!emailVal){
+    alert("Enter your email first");
+    return;
+  }
+
+  try{
+    await sendPasswordResetEmail(auth,emailVal);
+    alert("Password reset email sent");
+  }catch(e){
+    alert("Reset failed");
+  }
+};
+
+window.googleLogin = async function(){
+  try{
+    const res = await signInWithPopup(auth,provider);
+    startApp(res.user);
+  }catch(e){
+    alert("Google login failed. Add domain in Firebase Authorized domains.");
+  }
+};
+
+window.appleLogin = function(){
+  alert("Apple login needs Apple Developer setup. This will be added later.");
+};
+
+async function startApp(userObj){
+  currentUserId = userObj.uid || userObj.email || "guest";
+  currentUserName = userObj.displayName || userObj.email || "User";
+
+  document.getElementById("user").innerText = currentUserName;
+  document.getElementById("hi").innerText = "Hi " + currentUserName;
+  document.getElementById("av").innerText = currentUserName[0].toUpperCase();
+
+  try{
+    await setDoc(doc(db,"users",currentUserId),{
+      name: currentUserName,
+      email: userObj.email || "",
+      plan: "Free",
+      lastLogin: new Date().toISOString()
+    },{merge:true});
+  }catch(e){
+    console.log("User save error",e);
   }
 
   show("app");
-}
-  
-// Chat
-window.send = ()=>{
-let t=input.value.trim()
-if(!t)return
-
-chat.innerHTML+=`<div class="msg user">You: ${t}</div>`
-saveRecent(t)
-input.value=""
-
-setTimeout(()=>{
-chat.innerHTML+=`<div class="msg bot">Zyvaron: ${t}</div>`
-chat.scrollTop=chat.scrollHeight
-},500)
+  newChat();
 }
 
-// Tools
-window.tool=t=>{
-chat.innerHTML+=`<div class="msg bot">${t} feature coming soon</div>`
+function addMessage(text,type){
+  const chatBox = document.getElementById("chat");
+  const div = document.createElement("div");
+  div.className = "msg " + (type==="user" ? "userMsg" : "botMsg");
+  div.textContent = (type==="user" ? "You: " : "Zyvaron: ") + text;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Utils
-window.newChat=()=>chat.innerHTML="New Chat Started"
-window.toggleTools=()=>tools.classList.toggle("show")
-window.msg=t=>chat.innerHTML+=`<div class="msg bot">${t}</div>`
+window.send = async function(){
+  const inputBox = document.getElementById("input");
+  const text = inputBox.value.trim();
+  if(!text) return;
 
-// Recent chats
-function saveRecent(t){
-let arr=JSON.parse(localStorage.getItem("chat")||"[]")
-arr.unshift(t)
-arr=arr.slice(0,5)
-localStorage.setItem("chat",JSON.stringify(arr))
-renderRecent()
+  addMessage(text,"user");
+  saveRecent(text);
+  inputBox.value = "";
+
+  try{
+    await addDoc(collection(db,"users",currentUserId,"chats"),{
+      role:"user",
+      text:text,
+      time:new Date().toISOString()
+    });
+  }catch(e){
+    console.log("Chat save error",e);
+  }
+
+  const typing = document.createElement("div");
+  typing.className = "msg botMsg";
+  typing.textContent = "Zyvaron: thinking...";
+  document.getElementById("chat").appendChild(typing);
+
+  setTimeout(async ()=>{
+    typing.remove();
+    const reply = demoAI(text);
+    addMessage(reply,"bot");
+
+    try{
+      await addDoc(collection(db,"users",currentUserId,"chats"),{
+        role:"bot",
+        text:reply,
+        time:new Date().toISOString()
+      });
+    }catch(e){
+      console.log("Bot save error",e);
+    }
+  },600);
+};
+
+function demoAI(text){
+  const t = text.toLowerCase();
+
+  if(["porn","sex","xxx","18+","nude"].some(w=>t.includes(w))){
+    return "Sorry, I cannot help with adult or unsafe content.";
+  }
+  if(t.includes("code") || t.includes("coding")){
+    return "I can help with HTML, CSS, JavaScript, Python, Java, C, C++, React, Firebase and more. Real AI API will make this smarter.";
+  }
+  if(t.includes("website")){
+    return "For Zyvaron.AI, first keep UI stable, then add Firebase data, then connect real AI with backend.";
+  }
+  if(t.includes("money") || t.includes("premium")){
+    return "Best plan: Free users get limited features. Premium users get AI chat, file tools, image generation, Excel/PPT and faster service.";
+  }
+  return "Demo answer: " + text + ". Real ChatGPT-level answer needs backend AI API.";
+}
+
+window.tool = function(t){
+  addMessage(t + " feature UI is ready. Real function will be connected later.","bot");
+};
+
+window.msg = function(t){
+  addMessage(t,"bot");
+};
+
+window.newChat = function(){
+  document.getElementById("chat").innerHTML = "";
+  addMessage("New chat started. Ask Zyvaron anything.","bot");
+};
+
+window.toggleTools = function(){
+  document.getElementById("tools").classList.toggle("show");
+};
+
+function saveRecent(text){
+  let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || "[]");
+  arr.unshift(text);
+  arr = [...new Set(arr)].slice(0,8);
+  localStorage.setItem("zyvaron_recent",JSON.stringify(arr));
+  renderRecent();
 }
 
 function renderRecent(){
-let arr=JSON.parse(localStorage.getItem("chat")||"[]")
-recent.innerHTML=arr.map(x=>`<div>${x}</div>`).join("")
+  let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || "[]");
+  document.getElementById("recent").innerHTML = arr.map(x=>`<div>${escapeHtml(x)}</div>`).join("");
 }
-renderRecent()
 
-input.addEventListener("keydown",e=>{
-if(e.key==="Enter") send()
-})
+function escapeHtml(text){
+  return text.replace(/[&<>"']/g,m=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
 
+document.getElementById("input").addEventListener("keydown",e=>{
+  if(e.key==="Enter") window.send();
+});
+
+renderRecent();
 </script>
 
 </body>
