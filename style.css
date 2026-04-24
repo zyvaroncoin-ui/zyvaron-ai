@@ -7,11 +7,8 @@
 }
 
 body {
-  background: linear-gradient(135deg, #ecfff3, #ffffff);
-  color: #1a1a1a;
-  overflow-x: hidden;
+  overflow: hidden;
 }
-
 .hidden {
   display: none;
 }
