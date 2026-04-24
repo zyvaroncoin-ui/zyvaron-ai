@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#050816;color:#fff;overflow:hidden}
 
-/* 3D BG */
+/* BG */
 body::before{
 content:"";position:fixed;width:300%;height:300%;top:-100%;left:-100%;
 background:
@@ -19,50 +19,37 @@ linear-gradient(135deg,#050816,#120926);
 animation:bg 10s infinite alternate;z-index:-1}
 @keyframes bg{to{transform:translate(50px,50px) scale(1.1)}}
 
-/* Screens */
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 .hidden{display:none}
 
-/* Card */
 .card{background:#ffffff10;padding:30px;border-radius:20px;text-align:center;width:320px}
 
-/* Inputs */
 input{width:100%;padding:12px;margin:6px 0;border-radius:12px;border:0;background:#0006;color:white}
-
-/* Buttons */
 button{padding:10px;border-radius:12px;border:0;background:linear-gradient(135deg,#00c6ff,#7b2cff);color:white;margin:5px;cursor:pointer}
 
-/* Layout */
 .app{display:flex;height:100%}
 .sidebar{width:260px;background:#0004;padding:10px;display:flex;flex-direction:column;justify-content:space-between}
 .main{flex:1;padding:10px;display:flex;flex-direction:column}
 
-/* Chat */
 .chat{flex:1;background:#0004;padding:10px;border-radius:15px;overflow:auto;display:flex;flex-direction:column}
 .msg{max-width:75%;padding:10px;border-radius:15px;margin:5px 0;word-break:break-word}
 .userMsg{align-self:flex-end;background:#007bff}
 .botMsg{align-self:flex-start;background:#222}
 
-/* Input */
 .input-row{display:flex;gap:5px}
 .input-row input{flex:1}
 
-/* Sidebar */
 .sidebar button{width:100%;text-align:left}
 
-/* Tools */
 #tools{display:none}
 #tools button{width:100%;background:#333}
 
-/* Account */
 .account{display:flex;gap:10px;background:#0005;padding:10px;border-radius:10px;cursor:pointer}
 .avatar{width:40px;height:40px;border-radius:50%;background:#00e5ff;color:#000;display:flex;align-items:center;justify-content:center}
 
-/* Menu */
 .menu{display:none;position:absolute;bottom:80px;left:10px;background:#000;padding:10px;border-radius:10px}
 .menu.show{display:block}
 
-/* Typing */
 .typing::after{content:"";animation:dots 1s infinite}
 @keyframes dots{0%{content:""}33%{content:"."}66%{content:".."}100%{content:"..."}}
 </style>
@@ -70,7 +57,6 @@ button{padding:10px;border-radius:12px;border:0;background:linear-gradient(135de
 
 <body>
 
-<!-- WELCOME -->
 <div id="welcome" class="screen">
 <div class="card">
 <h1>Zyvaron AI</h1>
@@ -78,7 +64,6 @@ button{padding:10px;border-radius:12px;border:0;background:linear-gradient(135de
 </div>
 </div>
 
-<!-- INTRO -->
 <div id="intro" class="screen hidden">
 <div class="card">
 <h2>AI Chat • Tools • Coding</h2>
@@ -86,7 +71,6 @@ button{padding:10px;border-radius:12px;border:0;background:linear-gradient(135de
 </div>
 </div>
 
-<!-- LOGIN -->
 <div id="login" class="screen hidden">
 <div class="card">
 <input id="email" placeholder="Email">
@@ -96,7 +80,6 @@ button{padding:10px;border-radius:12px;border:0;background:linear-gradient(135de
 </div>
 </div>
 
-<!-- APP -->
 <div id="app" class="screen hidden">
 <div class="app">
 
@@ -107,7 +90,6 @@ button{padding:10px;border-radius:12px;border:0;background:linear-gradient(135de
 <button onclick="msg('Projects coming soon')">📂 Projects</button>
 <button onclick="msg('Search coming soon')">🔍 Search</button>
 <button onclick="toggleTools()">🧠 Tools</button>
-
 <div id="recent"></div>
 </div>
 
@@ -128,7 +110,6 @@ button{padding:10px;border-radius:12px;border:0;background:linear-gradient(135de
 
 <div class="main">
 <h2 id="hi">Hi</h2>
-
 <div id="chat" class="chat"></div>
 
 <div class="input-row">
@@ -145,7 +126,6 @@ button{padding:10px;border-radius:12px;border:0;background:linear-gradient(135de
 </div>
 
 </div>
-
 </div>
 </div>
 
@@ -220,29 +200,27 @@ typing.className="msg botMsg"
 typing.innerHTML='Zyvaron: thinking<span class="typing"></span>'
 chat.appendChild(typing)
 
-setTimeout(()=>{
-typing.remove()
-// REAL AI CALL
+try{
 const res = await fetch("http://localhost:3000/chat", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ message: t })
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({ message:t })
 });
 
 const data = await res.json();
-addMsg(data.reply, "bot");
+typing.remove();
+addMsg(data.reply,"bot");
+}catch(e){
+typing.remove();
+addMsg("AI server error","bot");
+}
+
 saveRecent(t)
-},800)
 }
 
 window.newChat=()=>chat.innerHTML=""
-
 window.toggleTools=()=>tools.style.display=tools.style.display==="block"?"none":"block"
-
 window.toggleMenu=()=>menu.classList.toggle("show")
-
 window.logout=()=>{signOut(auth);location.reload()}
 
 window.upgrade=()=>{
