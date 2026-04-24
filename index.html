@@ -9,7 +9,7 @@
 *{box-sizing:border-box;font-family:Arial}
 body{margin:0;background:#050816;color:#fff;overflow:hidden}
 
-/* 3D BG */
+/* Background */
 body::before{
 content:"";
 position:fixed;
@@ -26,77 +26,51 @@ z-index:-1;
 }
 @keyframes bg{to{transform:translate(50px,50px) scale(1.1)}}
 
-/* screens */
+/* Layout */
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 .hidden{display:none}
-
-/* card */
 .card{background:#ffffff10;padding:30px;border-radius:20px;text-align:center}
-
-/* inputs */
 input{width:100%;padding:10px;margin:5px 0;border-radius:10px;border:0;background:#0005;color:white}
-
-/* buttons */
 button{padding:10px;border-radius:10px;border:0;background:#00c6ff;color:white;margin:5px}
 
-/* app */
 .app{display:flex;width:100%;height:100%}
-.sidebar{width:260px;background:#0003;padding:10px}
+.sidebar{width:250px;background:#0003;padding:10px}
 .main{flex:1;padding:10px;display:flex;flex-direction:column}
 .chat{flex:1;background:#0003;overflow:auto;padding:10px}
 
-.msg{margin:6px 0}
+.msg{margin:5px 0}
 .user{color:#00e5ff}
 .bot{color:#7cff00}
-
-/* tools */
-.tools{display:none;flex-wrap:wrap}
-.tools.show{display:flex}
 </style>
 </head>
 
 <body>
 
-<!-- welcome -->
+<!-- Welcome -->
 <div id="welcome" class="screen">
 <div class="card">
 <h1>Zyvaron AI</h1>
-<button onclick="show('intro')">Start</button>
+<button onclick="show('login')">Start</button>
 </div>
 </div>
 
-<!-- intro -->
-<div id="intro" class="screen hidden">
-<div class="card">
-<h2>AI Chat • Coding • Tools • Projects</h2>
-<button onclick="show('login')">Continue</button>
-</div>
-</div>
-
-<!-- login -->
+<!-- Login -->
 <div id="login" class="screen hidden">
 <div class="card">
 <h2>Login</h2>
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 <button onclick="emailLogin()">Login</button><br>
-<button onclick="googleLogin()">Google</button>
-<button onclick="alert('Apple later')">Apple</button>
-<button onclick="alert('Forgot later')">Forgot</button>
+<button onclick="googleLogin()">Google Login</button>
 </div>
 </div>
 
-<!-- app -->
+<!-- App -->
 <div id="app" class="screen hidden">
 <div class="app">
 
 <div class="sidebar">
-<h3>Zyvaron</h3>
 <button onclick="newChat()">New Chat</button>
-<button onclick="msg('History')">History</button>
-<button onclick="msg('Project')">Project</button>
-<button onclick="msg('Search')">Search</button>
-<button onclick="toggleTools()">More</button>
 </div>
 
 <div class="main">
@@ -104,19 +78,8 @@ button{padding:10px;border-radius:10px;border:0;background:#00c6ff;color:white;m
 
 <div id="chat" class="chat"></div>
 
-<input id="input" placeholder="Ask Zyvaron...">
+<input id="input" placeholder="Ask...">
 <button onclick="send()">Send</button>
-<button onclick="toggleTools()">⋯</button>
-
-<div id="tools" class="tools">
-<button onclick="msg('Screenshot')">Screenshot</button>
-<button onclick="msg('File')">Attach</button>
-<button onclick="msg('Image AI')">Image</button>
-<button onclick="msg('Camera')">Camera</button>
-<button onclick="msg('Deep Search')">Deep</button>
-<button onclick="msg('Excel')">Excel</button>
-<button onclick="msg('PPT')">PPT</button>
-</div>
 
 </div>
 
@@ -125,77 +88,85 @@ button{padding:10px;border-radius:10px;border:0;background:#00c6ff;color:white;m
 
 <script type="module">
 
-// Firebase
+// Firebase import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+// Your Firebase config (already set)
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID",
-  appId: "YOUR_APP"
+  apiKey: "AIzaSyBSLcHRokXv81O4dr0RX30W3YIE6ujZxhw",
+  authDomain: "zyvaron-ai.firebaseapp.com",
+  projectId: "zyvaron-ai",
+  storageBucket: "zyvaron-ai.firebasestorage.app",
+  messagingSenderId: "997983383",
+  appId: "1:997983383:web:46a0c5e8c59382e7fa55d2"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// screen
-window.show=id=>{
-document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'))
-document.getElementById(id).classList.remove('hidden')
+// Screen switch
+window.show = function(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'))
+  document.getElementById(id).classList.remove('hidden')
 }
 
-// login
-window.emailLogin=async()=>{
-try{
-let u=await signInWithEmailAndPassword(auth,email.value,password.value)
-start(u.user.email)
-}catch{alert("Login failed")}
+// Email login
+window.emailLogin = async function(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  try{
+    const user = await signInWithEmailAndPassword(auth,email,pass);
+    start(user.user.email);
+  }catch{
+    alert("Login failed");
+  }
 }
 
-window.googleLogin=async()=>{
-try{
-let r=await signInWithPopup(auth,provider)
-start(r.user.displayName)
-}catch{alert("Google fail")}
+// Google login
+window.googleLogin = async function(){
+  try{
+    const res = await signInWithPopup(auth,provider);
+    start(res.user.displayName);
+  }catch{
+    alert("Google login failed");
+  }
 }
 
+// Start app
 function start(name){
-hi.innerText="Hi "+name
-show("app")
+  document.getElementById("hi").innerText="Hi "+name;
+  show("app");
 }
 
-// chat
-window.send=()=>{
-let t=input.value.trim()
-if(!t)return
-chat.innerHTML+=`<div class="msg user">You: ${t}</div>`
-input.value=""
+// Chat
+window.send = function(){
+  const inputBox = document.getElementById("input");
+  const chatBox = document.getElementById("chat");
 
-setTimeout(()=>{
-chat.innerHTML+=`<div class="msg bot">Zyvaron: ${AI(t)}</div>`
-chat.scrollTop=chat.scrollHeight
-},500)
+  let text = inputBox.value.trim();
+  if(!text) return;
+
+  chatBox.innerHTML += `<div class="msg user">You: ${text}</div>`;
+  inputBox.value = "";
+
+  setTimeout(()=>{
+    chatBox.innerHTML += `<div class="msg bot">Zyvaron: ${text}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  },500);
 }
 
-// simple AI logic
-function AI(t){
-t=t.toLowerCase()
-if(t.includes("code")) return "Supports HTML, CSS, JS, Python, Java, C++"
-if(t.includes("website")) return "You are building Zyvaron AI startup"
-if(t.includes("money")) return "Use freemium + premium plan"
-return "Demo AI: "+t
+// New chat
+window.newChat = function(){
+  document.getElementById("chat").innerHTML = "New Chat Started";
 }
 
-// utils
-window.msg=t=>chat.innerHTML+=`<div class="msg bot">${t} coming soon</div>`
-window.newChat=()=>chat.innerHTML="New Chat Started"
-window.toggleTools=()=>tools.classList.toggle("show")
-
-input.addEventListener("keydown",e=>{
-if(e.key==="Enter") send()
-})
+// Enter key
+document.getElementById("input").addEventListener("keydown",e=>{
+  if(e.key==="Enter") send();
+});
 
 </script>
 
