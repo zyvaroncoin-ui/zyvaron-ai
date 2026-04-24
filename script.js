@@ -1,40 +1,145 @@
-const startBtn = document.getElementById("start-btn");
-const welcome = document.getElementById("welcome-screen");
-const login = document.getElementById("login-screen");
-const app = document.getElementById("app-screen");
+// ===== ELEMENTS =====
+const screens = ["welcome","intro","login","app"];
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
 
-const form = document.getElementById("login-form");
-const input = document.getElementById("user-input");
-const chat = document.getElementById("chat-box");
+let userName = "User";
+let blockedCount = 0;
 
-startBtn.onclick = () => {
-  welcome.classList.add("hidden");
-  login.classList.remove("hidden");
-};
+// ===== SCREEN CONTROL =====
+function show(id){
+  screens.forEach(s => document.getElementById(s).classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
 
-form.onsubmit = (e) => {
-  e.preventDefault();
-  login.classList.add("hidden");
-  app.classList.remove("hidden");
-};
+// ===== LOGIN =====
+function login(){
+  const name = document.getElementById("name").value.trim() || "User";
+  const pass = document.getElementById("pass")?.value || "123";
 
-function sendMessage() {
+  if(!pass){
+    alert("Enter password");
+    return;
+  }
+
+  userName = name;
+
+  document.getElementById("user").innerText = userName;
+  document.getElementById("hi").innerText = "Hi " + userName;
+  document.getElementById("av").innerText = userName[0].toUpperCase();
+
+  show("app");
+
+  newChat();
+}
+
+// ===== CHAT =====
+function send(){
   const text = input.value.trim();
-  if (!text) return;
+  if(!text) return;
 
-  chat.innerHTML += `<div>User: ${text}</div>`;
+  addMsg(text,"user");
+  saveRecent(text);
+
   input.value = "";
 
-  setTimeout(() => {
-    chat.innerHTML += `<div>AI: ${text}</div>`;
-    chat.scrollTop = chat.scrollHeight;
-  }, 500);
+  addTyping();
+
+  setTimeout(()=>{
+    removeTyping();
+
+    if(isBlocked(text)){
+      blockedCount++;
+      addMsg("❌ Blocked unsafe request ("+blockedCount+"/3)","bot");
+
+      if(blockedCount >= 3){
+        addMsg("🚫 Account temporarily blocked (demo)","bot");
+      }
+      return;
+    }
+
+    addMsg(generateReply(text),"bot");
+
+  },700);
 }
 
-function newChat() {
-  chat.innerHTML = "New Chat Started";
+// ===== MESSAGE UI =====
+function addMsg(text,type){
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.innerText = (type==="user" ? "You: " : "Zyvaron: ") + text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMessage();
+// ===== TYPING =====
+function addTyping(){
+  const div = document.createElement("div");
+  div.id = "typing";
+  div.className = "msg bot";
+  div.innerText = "Zyvaron is thinking...";
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeTyping(){
+  const t = document.getElementById("typing");
+  if(t) t.remove();
+}
+
+// ===== DEMO AI =====
+function generateReply(t){
+  const x = t.toLowerCase();
+
+  if(x.includes("hello") || x.includes("hi"))
+    return "Hello " + userName + "! How can I help you?";
+
+  if(x.includes("code"))
+    return "I support HTML, CSS, JavaScript, Python, Java, C, C++, React and more.";
+
+  if(x.includes("website"))
+    return "You are building Zyvaron.AI. Next step: connect real AI API.";
+
+  if(x.includes("money"))
+    return "Use freemium model: free users + paid premium tools.";
+
+  return "Demo response: " + t;
+}
+
+// ===== SAFETY =====
+function isBlocked(t){
+  const bad = ["porn","sex","xxx","18+","nude"];
+  return bad.some(w => t.toLowerCase().includes(w));
+}
+
+// ===== TOOLS =====
+function toggleTools(){
+  document.getElementById("tools").classList.toggle("show");
+}
+
+function msg(t){
+  addMsg(t + " tool coming soon","bot");
+}
+
+function newChat(){
+  chat.innerHTML = "";
+  addMsg("✨ New chat started. Ask anything.","bot");
+}
+
+// ===== RECENT CHATS =====
+function saveRecent(text){
+  let arr = JSON.parse(localStorage.getItem("zyvaronChat") || "[]");
+  arr.unshift(text);
+  arr = [...new Set(arr)].slice(0,8);
+  localStorage.setItem("zyvaronChat", JSON.stringify(arr));
+}
+
+// ===== ENTER KEY =====
+input.addEventListener("keydown", e=>{
+  if(e.key === "Enter") send();
 });
+
+// ===== SOCIAL LOGIN DEMO =====
+function socialLogin(type){
+  alert(type + " login needs Firebase setup");
+}
