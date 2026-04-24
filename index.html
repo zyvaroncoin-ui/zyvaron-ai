@@ -9,7 +9,7 @@
 *{box-sizing:border-box;font-family:Arial}
 body{margin:0;background:#050816;color:#fff;overflow:hidden}
 
-/* Background */
+/* 3D Background */
 body::before{
 content:"";
 position:fixed;
@@ -29,57 +29,122 @@ z-index:-1;
 /* Layout */
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 .hidden{display:none}
-.card{background:#ffffff10;padding:30px;border-radius:20px;text-align:center}
+.card{background:#ffffff10;padding:30px;border-radius:20px;text-align:center;width:300px}
+
+/* Inputs */
 input{width:100%;padding:10px;margin:5px 0;border-radius:10px;border:0;background:#0005;color:white}
-button{padding:10px;border-radius:10px;border:0;background:#00c6ff;color:white;margin:5px}
 
+/* Buttons */
+button{padding:10px;border-radius:10px;border:0;background:#00c6ff;color:white;margin:5px;cursor:pointer}
+
+/* App */
 .app{display:flex;width:100%;height:100%}
-.sidebar{width:250px;background:#0003;padding:10px}
+.sidebar{width:260px;background:#0003;padding:10px;display:flex;flex-direction:column;justify-content:space-between}
 .main{flex:1;padding:10px;display:flex;flex-direction:column}
-.chat{flex:1;background:#0003;overflow:auto;padding:10px}
 
+/* Chat */
+.chat{flex:1;background:#0003;overflow:auto;padding:10px}
 .msg{margin:5px 0}
 .user{color:#00e5ff}
 .bot{color:#7cff00}
+
+/* Tools */
+.tools{display:none;flex-wrap:wrap}
+.tools.show{display:flex}
+
+/* Account */
+.account{background:#0004;padding:10px;border-radius:10px}
+.avatar{width:40px;height:40px;border-radius:50%;background:#00e5ff;display:flex;align-items:center;justify-content:center;color:black;font-weight:bold}
+
+/* Recent */
+.recent{font-size:12px;max-height:150px;overflow:auto}
+.recent div{background:#0004;margin:3px;padding:5px;border-radius:5px}
 </style>
 </head>
 
 <body>
 
-<!-- Welcome -->
+<!-- WELCOME -->
 <div id="welcome" class="screen">
 <div class="card">
 <h1>Zyvaron AI</h1>
-<button onclick="show('login')">Start</button>
+<p>Smart AI Assistant</p>
+<button onclick="show('intro')">Start</button>
 </div>
 </div>
 
-<!-- Login -->
+<!-- INTRO -->
+<div id="intro" class="screen hidden">
+<div class="card">
+<h2>What Zyvaron Gives</h2>
+<p>Chat • Coding • Tools • Projects • Search</p>
+<button onclick="show('login')">Continue</button>
+</div>
+</div>
+
+<!-- LOGIN -->
 <div id="login" class="screen hidden">
 <div class="card">
 <h2>Login</h2>
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 <button onclick="emailLogin()">Login</button><br>
-<button onclick="googleLogin()">Google Login</button>
+<button onclick="googleLogin()">Google</button>
+<button onclick="alert('Apple login later')">Apple</button><br>
+<button onclick="alert('Forgot password later')">Forgot</button>
+<button onclick="alert('Register later')">Register</button>
 </div>
 </div>
 
-<!-- App -->
+<!-- APP -->
 <div id="app" class="screen hidden">
 <div class="app">
 
+<!-- SIDEBAR -->
 <div class="sidebar">
+
+<div>
+<h3>Zyvaron</h3>
 <button onclick="newChat()">New Chat</button>
+<button onclick="msg('History')">History</button>
+<button onclick="msg('Project')">Project</button>
+<button onclick="msg('Search')">Search Chat</button>
+<button onclick="toggleTools()">More</button>
+
+<h4>Recent</h4>
+<div id="recent" class="recent"></div>
 </div>
 
+<div class="account">
+<div class="avatar" id="av">U</div>
+<div>
+<b id="user">User</b><br>
+<small>Free Plan</small>
+</div>
+</div>
+
+</div>
+
+<!-- MAIN -->
 <div class="main">
+
 <h2 id="hi">Hi User</h2>
 
 <div id="chat" class="chat"></div>
 
-<input id="input" placeholder="Ask...">
+<input id="input" placeholder="Ask Zyvaron...">
 <button onclick="send()">Send</button>
+<button onclick="toggleTools()">⋯</button>
+
+<div id="tools" class="tools">
+<button onclick="tool('Screenshot')">Screenshot</button>
+<button onclick="tool('File')">Attach File</button>
+<button onclick="tool('Image AI')">Create Image</button>
+<button onclick="tool('Camera')">Camera</button>
+<button onclick="tool('Deep Search')">Deep Search</button>
+<button onclick="tool('Excel')">Excel</button>
+<button onclick="tool('PPT')">PPT</button>
+</div>
 
 </div>
 
@@ -88,17 +153,14 @@ button{padding:10px;border-radius:10px;border:0;background:#00c6ff;color:white;m
 
 <script type="module">
 
-// Firebase import
+// Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// Your Firebase config (already set)
 const firebaseConfig = {
   apiKey: "AIzaSyBSLcHRokXv81O4dr0RX30W3YIE6ujZxhw",
   authDomain: "zyvaron-ai.firebaseapp.com",
   projectId: "zyvaron-ai",
-  storageBucket: "zyvaron-ai.firebasestorage.app",
-  messagingSenderId: "997983383",
   appId: "1:997983383:web:46a0c5e8c59382e7fa55d2"
 };
 
@@ -106,67 +168,77 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Screen switch
-window.show = function(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'))
-  document.getElementById(id).classList.remove('hidden')
+// Screen
+window.show = id=>{
+document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'))
+document.getElementById(id).classList.remove('hidden')
 }
 
-// Email login
-window.emailLogin = async function(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-
-  try{
-    const user = await signInWithEmailAndPassword(auth,email,pass);
-    start(user.user.email);
-  }catch{
-    alert("Login failed");
-  }
+// Login
+window.emailLogin = async ()=>{
+try{
+let u=await signInWithEmailAndPassword(auth,email.value,password.value)
+start(u.user.email)
+}catch{alert("Login failed")}
 }
 
-// Google login
-window.googleLogin = async function(){
-  try{
-    const res = await signInWithPopup(auth,provider);
-    start(res.user.displayName);
-  }catch{
-    alert("Google login failed");
-  }
+window.googleLogin = async ()=>{
+try{
+let r=await signInWithPopup(auth,provider)
+start(r.user.displayName)
+}catch{alert("Google fail")}
 }
 
-// Start app
 function start(name){
-  document.getElementById("hi").innerText="Hi "+name;
-  show("app");
+user.innerText=name
+hi.innerText="Hi "+name
+av.innerText=name[0]
+show("app")
 }
 
 // Chat
-window.send = function(){
-  const inputBox = document.getElementById("input");
-  const chatBox = document.getElementById("chat");
+window.send = ()=>{
+let t=input.value.trim()
+if(!t)return
 
-  let text = inputBox.value.trim();
-  if(!text) return;
+chat.innerHTML+=`<div class="msg user">You: ${t}</div>`
+saveRecent(t)
+input.value=""
 
-  chatBox.innerHTML += `<div class="msg user">You: ${text}</div>`;
-  inputBox.value = "";
-
-  setTimeout(()=>{
-    chatBox.innerHTML += `<div class="msg bot">Zyvaron: ${text}</div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
-  },500);
+setTimeout(()=>{
+chat.innerHTML+=`<div class="msg bot">Zyvaron: ${t}</div>`
+chat.scrollTop=chat.scrollHeight
+},500)
 }
 
-// New chat
-window.newChat = function(){
-  document.getElementById("chat").innerHTML = "New Chat Started";
+// Tools
+window.tool=t=>{
+chat.innerHTML+=`<div class="msg bot">${t} feature coming soon</div>`
 }
 
-// Enter key
-document.getElementById("input").addEventListener("keydown",e=>{
-  if(e.key==="Enter") send();
-});
+// Utils
+window.newChat=()=>chat.innerHTML="New Chat Started"
+window.toggleTools=()=>tools.classList.toggle("show")
+window.msg=t=>chat.innerHTML+=`<div class="msg bot">${t}</div>`
+
+// Recent chats
+function saveRecent(t){
+let arr=JSON.parse(localStorage.getItem("chat")||"[]")
+arr.unshift(t)
+arr=arr.slice(0,5)
+localStorage.setItem("chat",JSON.stringify(arr))
+renderRecent()
+}
+
+function renderRecent(){
+let arr=JSON.parse(localStorage.getItem("chat")||"[]")
+recent.innerHTML=arr.map(x=>`<div>${x}</div>`).join("")
+}
+renderRecent()
+
+input.addEventListener("keydown",e=>{
+if(e.key==="Enter") send()
+})
 
 </script>
 
