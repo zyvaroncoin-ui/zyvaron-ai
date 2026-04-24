@@ -199,13 +199,13 @@ color:black;font-weight:bold;
     </div>
   </div>
 </div>
-  
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+  <script type="module">
 
-// Your web app's Firebase configuration
+// ===== FIREBASE IMPORT =====
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyBSLcHRokXv81O4dr0RX30W3YIE6ujZxhw",
   authDomain: "zyvaron-ai.firebaseapp.com",
@@ -215,47 +215,200 @@ const firebaseConfig = {
   appId: "1:997983383:web:46a0c5e8c59382e7fa55d2"
 };
 
-// Initialize Firebase
+// ===== INIT =====
 const app = initializeApp(firebaseConfig);
-<script>
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-/* SCREEN CONTROL */
-function show(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'))
-  document.getElementById(id).classList.remove('hidden')
+// ===== SCREEN CONTROL =====
+window.show = function(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
 }
 
-/* LOGIN */
-function login(){
-  let name=document.getElementById('name').value || "User"
-  document.getElementById('user').innerText=name
-  document.getElementById('hi').innerText="Hi "+name
-  document.getElementById('av').innerText=name[0]
-  show('app')
+// ===== EMAIL LOGIN =====
+window.login = async function(){
+  const email = document.getElementById("name").value;
+  const pass = document.querySelector("input[type='password']").value;
+
+  if(!email || !pass){
+    alert("Enter email & password");
+    return;
+  }
+
+  try{
+    const user = await signInWithEmailAndPassword(auth, email, pass);
+    startApp(user.user.email);
+  }catch(e){
+    alert("Login failed");
+  }
 }
 
-/* CHAT */
-function send(){
-  let text=input.value.trim()
-  if(!text)return
+// ===== GOOGLE LOGIN =====
+window.googleLogin = async function(){
+  try{
+    const result = await signInWithPopup(auth, provider);
+    startApp(result.user.displayName);
+  }catch(e){
+    alert("Google login failed");
+  }
+}
 
-  chat.innerHTML+=`<div class="msg user">You: ${text}</div>`
-  input.value=""
+// ===== START APP =====
+function startApp(name){
+  document.getElementById('user').innerText = name;
+  document.getElementById('hi').innerText = "Hi " + name;
+  document.getElementById('av').innerText = name[0].toUpperCase();
+  show('app');
+}
+
+// ===== CHAT SYSTEM =====
+window.send = function(){
+  const text = input.value.trim();
+  if(!text) return;
+
+  chat.innerHTML += `<div class="msg user">You: ${text}</div>`;
+  input.value = "";
+
+  // typing effect
+  const typing = document.createElement("div");
+  typing.className = "msg bot";
+  typing.innerText = "Zyvaron is thinking...";
+  chat.appendChild(typing);
+  chat.scrollTop = chat.scrollHeight;
 
   setTimeout(()=>{
-    chat.innerHTML+=`<div class="msg bot">Zyvaron: ${text}</div>`
-    chat.scrollTop=chat.scrollHeight
-  },500)
+    typing.remove();
+
+    chat.innerHTML += `<div class="msg bot">Zyvaron: ${text}</div>`;
+    chat.scrollTop = chat.scrollHeight;
+  },600);
 }
 
-/* UTIL */
-function msg(t){chat.innerHTML+=`<div class="msg bot">${t} tool coming</div>`}
-function newChat(){chat.innerHTML="New Chat Started"}
-function toggleTools(){tools.classList.toggle("show")}
+// ===== UTIL =====
+window.msg = function(t){
+  chat.innerHTML += `<div class="msg bot">${t} tool coming soon</div>`;
+}
 
-input.addEventListener("keydown",e=>{if(e.key==="Enter")send()})
+window.newChat = function(){
+  chat.innerHTML = "";
+  chat.innerHTML = `<div class="msg bot">✨ New chat started</div>`;
+}
+
+window.toggleTools = function(){
+  document.getElementById("tools").classList.toggle("show");
+}
+
+// ===== ENTER KEY =====
+input.addEventListener("keydown", e=>{
+  if(e.key === "Enter") send();
+});
+
+<script type="module">
+
+// ===== FIREBASE IMPORT =====
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyBSLcHRokXv81O4dr0RX30W3YIE6ujZxhw",
+  authDomain: "zyvaron-ai.firebaseapp.com",
+  projectId: "zyvaron-ai",
+  storageBucket: "zyvaron-ai.firebasestorage.app",
+  messagingSenderId: "997983383",
+  appId: "1:997983383:web:46a0c5e8c59382e7fa55d2"
+};
+
+// ===== INIT =====
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// ===== SCREEN CONTROL =====
+window.show = function(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ===== EMAIL LOGIN =====
+window.login = async function(){
+  const email = document.getElementById("name").value;
+  const pass = document.querySelector("input[type='password']").value;
+
+  if(!email || !pass){
+    alert("Enter email & password");
+    return;
+  }
+
+  try{
+    const user = await signInWithEmailAndPassword(auth, email, pass);
+    startApp(user.user.email);
+  }catch(e){
+    alert("Login failed");
+  }
+}
+
+// ===== GOOGLE LOGIN =====
+window.googleLogin = async function(){
+  try{
+    const result = await signInWithPopup(auth, provider);
+    startApp(result.user.displayName);
+  }catch(e){
+    alert("Google login failed");
+  }
+}
+
+// ===== START APP =====
+function startApp(name){
+  document.getElementById('user').innerText = name;
+  document.getElementById('hi').innerText = "Hi " + name;
+  document.getElementById('av').innerText = name[0].toUpperCase();
+  show('app');
+}
+
+// ===== CHAT SYSTEM =====
+window.send = function(){
+  const text = input.value.trim();
+  if(!text) return;
+
+  chat.innerHTML += `<div class="msg user">You: ${text}</div>`;
+  input.value = "";
+
+  // typing effect
+  const typing = document.createElement("div");
+  typing.className = "msg bot";
+  typing.innerText = "Zyvaron is thinking...";
+  chat.appendChild(typing);
+  chat.scrollTop = chat.scrollHeight;
+
+  setTimeout(()=>{
+    typing.remove();
+
+    chat.innerHTML += `<div class="msg bot">Zyvaron: ${text}</div>`;
+    chat.scrollTop = chat.scrollHeight;
+  },600);
+}
+
+// ===== UTIL =====
+window.msg = function(t){
+  chat.innerHTML += `<div class="msg bot">${t} tool coming soon</div>`;
+}
+
+window.newChat = function(){
+  chat.innerHTML = "";
+  chat.innerHTML = `<div class="msg bot">✨ New chat started</div>`;
+}
+
+window.toggleTools = function(){
+  document.getElementById("tools").classList.toggle("show");
+}
+
+// ===== ENTER KEY =====
+input.addEventListener("keydown", e=>{
+  if(e.key === "Enter") send();
+});
 
 </script>
-
 </body>
 </html>
