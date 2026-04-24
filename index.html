@@ -349,24 +349,26 @@ function saveRecent(text){
 }
 
 function renderRecent(){
-  let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || "[]");
-  document.getElementById("recent").innerHTML = arr.map(x=>`<div>${escapeHtml(x)}</div>`).join("");
+  let arr = JSON.parse(localStorage.getItem("zyvaron_recent") || []);
+
+  document.getElementById("recent").innerHTML =
+    arr.map((x,i)=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span onclick="useRecent('${x}')">${x}</span>
+        <button onclick="deleteOne(${i})" style="padding:2px 6px;background:red;">X</button>
+      </div>
+    `).join("");
+
+  // Add DELETE ALL button
+  if(arr.length > 0){
+    document.getElementById("recent").innerHTML += `
+      <button onclick="deleteAll()" style="width:100%;margin-top:5px;background:#ff4444;">
+        Clear All
+      </button>
+    `;
+  }
 }
-
-function escapeHtml(text){
-  return text.replace(/[&<>"']/g,m=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#039;"
-  }[m]));
-}
-
-document.getElementById("input").addEventListener("keydown",e=>{
-  if(e.key==="Enter") window.send();
-});
-
+  
 renderRecent();
 </script>
 
