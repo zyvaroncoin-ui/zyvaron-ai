@@ -18,7 +18,7 @@ app.post("/chat", async (req, res) => {
     const { message } = req.body;
 
     const response = await client.responses.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4.1-mini",
       input: message
     });
 
