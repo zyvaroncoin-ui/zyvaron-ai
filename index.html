@@ -1,83 +1,116 @@
-<!-- 🔥 ZYVARON AI FINAL VERSION (UI + REAL AI + FEATURES) -->
-<!-- Only important JS upgraded, UI same -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zyvaron AI</title>
+
+<style>
+body{font-family:Arial;margin:0;background:#080b1f;color:white}
+.hidden{display:none}
+.screen{padding:20px}
+
+/* simple UI */
+button{padding:10px;margin:5px;border:none;border-radius:8px;background:#7c3cff;color:white;cursor:pointer}
+input{padding:10px;margin:5px;border-radius:8px;border:none;width:90%}
+
+.chat-area{height:300px;overflow:auto;background:#111;padding:10px;border-radius:10px}
+.msg{margin:5px;padding:10px;border-radius:10px}
+.user{background:#7c3cff;text-align:right}
+.ai{background:#222}
+</style>
+</head>
+
+<body>
+
+<!-- WELCOME -->
+<div id="welcome" class="screen">
+<h1>Zyvaron AI</h1>
+<button onclick="showIntro()">Start</button>
+</div>
+
+<!-- LOGIN -->
+<div id="introLogin" class="screen hidden">
+<h2>Login</h2>
+<input id="username" placeholder="Username">
+<input id="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen hidden">
+
+<h2 id="greeting">Hi</h2>
+
+<div id="chatArea" class="chat-area"></div>
+
+<input id="chatInput" placeholder="Ask something" onkeydown="enterSend(event)">
+<button onclick="sendMessage()">Send</button>
+
+<h3>Recent</h3>
+<div id="recentChats"></div>
+
+</div>
 
 <script>
-let currentUser = localStorage.getItem("zyvaronUser") || "User";
-let recentChats = JSON.parse(localStorage.getItem("zyvaronChats")) || [];
 
+let currentUser = localStorage.getItem("user") || "User";
+let recentChats = JSON.parse(localStorage.getItem("chats")) || [];
+
+/* SCREEN */
 function showIntro(){
   document.getElementById("welcome").classList.add("hidden");
   document.getElementById("introLogin").classList.remove("hidden");
 }
 
+/* LOGIN */
 function login(){
-  const name = document.getElementById("username").value.trim();
+  let name = document.getElementById("username").value.trim();
   if(!name){
-    alert("Enter username");
+    alert("Enter name");
     return;
   }
-  startDashboard(name);
-}
 
-function demoLogin(name){
-  startDashboard(name);
-}
-
-function registerUser(){
-  const name = document.getElementById("username").value.trim() || "New User";
-  startDashboard(name);
-}
-
-function forgotPassword(){
-  alert("Demo mode");
-}
-
-function startDashboard(name){
   currentUser = name;
-  localStorage.setItem("zyvaronUser", currentUser);
+  localStorage.setItem("user",name);
 
   document.getElementById("introLogin").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
 
-  updateUserUI();
+  document.getElementById("greeting").innerText="Hi "+name;
+
   loadRecentChats();
 }
 
-function updateUserUI(){
-  document.getElementById("greeting").innerText = "Hii " + currentUser;
-  document.getElementById("profileName").innerText = currentUser;
-  document.getElementById("avatarLetter").innerText = currentUser.charAt(0).toUpperCase();
-}
-
+/* CHAT */
 async function sendMessage(){
-  const input = document.getElementById("chatInput");
-  const text = input.value.trim();
+  let input=document.getElementById("chatInput");
+  let text=input.value.trim();
   if(!text) return;
 
-  addMessage(text, "user");
+  addMessage(text,"user");
+  input.value="";
   saveRecent(text);
-  input.value = "";
 
-  // 🔥 typing animation
-  const typing = document.createElement("div");
-  typing.className = "msg ai-msg";
-  typing.innerText = "Zyvaron is typing...";
+  let typing=document.createElement("div");
+  typing.className="msg ai";
+  typing.innerText="Thinking...";
   document.getElementById("chatArea").appendChild(typing);
 
   try{
-    const res = await fetch("http://localhost:3000/chat",{
+    let res=await fetch("http://localhost:3000/chat",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({message:text})
     });
 
-    const data = await res.json();
+    let data=await res.json();
     typing.remove();
-    addMessage(data.reply || "No reply", "ai");
+    addMessage(data.reply,"ai");
 
   }catch(e){
     typing.remove();
-    addMessage("AI server error ⚠️", "ai");
+    addMessage("AI server error","ai");
   }
 }
 
@@ -85,75 +118,57 @@ function enterSend(e){
   if(e.key==="Enter") sendMessage();
 }
 
-function addMessage(text, sender){
-  const chatArea = document.getElementById("chatArea");
-  const msg = document.createElement("div");
-
-  msg.className = "msg " + (sender==="user"?"user-msg":"ai-msg");
-  msg.innerHTML = text;
-
-  chatArea.appendChild(msg);
-  chatArea.scrollTop = chatArea.scrollHeight;
+function addMessage(text,type){
+  let div=document.createElement("div");
+  div.className="msg "+(type==="user"?"user":"ai");
+  div.innerText=text;
+  let chat=document.getElementById("chatArea");
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
 }
 
-/* 🔥 RECENT CHAT SYSTEM */
+/* RECENT */
 function saveRecent(text){
   recentChats.unshift(text);
-  recentChats = recentChats.slice(0,8);
-  localStorage.setItem("zyvaronChats", JSON.stringify(recentChats));
+  recentChats=recentChats.slice(0,5);
+  localStorage.setItem("chats",JSON.stringify(recentChats));
   loadRecentChats();
 }
 
 function loadRecentChats(){
-  const box = document.getElementById("recentChats");
-  box.innerHTML = "";
+  let box=document.getElementById("recentChats");
 
-  recentChats.forEach((chat,i)=>{
-    const item = document.createElement("div");
-    item.className="recent-item";
+  if(!box) return;
 
-    item.innerHTML = `
-      ${chat.substring(0,25)}...
-      <button onclick="deleteChat(${i})">❌</button>
-    `;
-    box.appendChild(item);
+  box.innerHTML="";
+
+  recentChats.forEach((c,i)=>{
+    let d=document.createElement("div");
+    d.innerHTML=c+" <button onclick='del("+i+")'>X</button>";
+    box.appendChild(d);
   });
 
   if(recentChats.length>0){
-    const clearBtn = document.createElement("button");
-    clearBtn.innerText="Clear All";
-    clearBtn.onclick=clearAll;
-    box.appendChild(clearBtn);
+    let b=document.createElement("button");
+    b.innerText="Clear All";
+    b.onclick=clearAll;
+    box.appendChild(b);
   }
 }
 
-function deleteChat(i){
+function del(i){
   recentChats.splice(i,1);
-  localStorage.setItem("zyvaronChats", JSON.stringify(recentChats));
+  localStorage.setItem("chats",JSON.stringify(recentChats));
   loadRecentChats();
 }
 
 function clearAll(){
   recentChats=[];
-  localStorage.removeItem("zyvaronChats");
+  localStorage.removeItem("chats");
   loadRecentChats();
 }
 
-/* 🔥 TOOLS */
-function toggleTools(){
-  document.getElementById("toolsMenu").classList.toggle("hidden");
-}
-
-function toolReply(text){
-  toggleTools();
-  addMessage(text, "ai");
-}
-
-/* 🔥 NEW CHAT */
-function newChat(){
-  document.getElementById("chatArea").innerHTML=
-  `<div class="msg ai-msg">New chat started 🚀</div>`;
-}
-
-loadRecentChats();
 </script>
+
+</body>
+</html>
